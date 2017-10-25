@@ -70,21 +70,8 @@ Condicoes:
 #define MAXACOESFINAL 1100
 #define QTDSALA 100
 
-/* APRIORI0 -> nenhum conhecimento a priori */
-/* APRIORI1 -> mpos, qtd_sala */
-/* APRIORI2 -> menor_sala, maior_sala. implica saber 1. */
-/* APRIORI3 -> condicao de cada sala. implica saber 1 e 2. */
-/* APRIORI4 -> capacidade do saco */
-/* APRIORI5 -> sala de descarga e probabilidades do ambiente */
-#define APRIORI0 0
-#define APRIORI1 1
-#define APRIORI2 2
-#define APRIORI3 3
-#define APRIORI4 4
-#define APRIORI5 5
-
-/* OBS0 -> obs.v_andar, obs.v_ler, obs.v_aspirar, obs.v_assoprar, obs.v_passarvez, obs.v_limpar, obs.v_desc, obs.v_bonus*/
-/*         obs.p_sujar, obs.p_terremoto, obs.p_mecanica, obs.p_sensorial*/
+/* OBS0 -> obs.v_andar, obs.v_ler, obs.v_aspirar, obs.v_assoprar, obs.v_passarvez, obs.v_limpar, obs.v_desc, obs.v_bonus, v_tempolimpo*/
+/*         obs.p_sujar, obs.p_terremoto, obs.p_succao, obs.p_movimento, obs.p_sensorial*/
 /*         mostrar_pontos() habilitada (retorna a pontuacao corrente)*/
 /*         Alem de tudo do OBS1, OBS2 e OBS3*/
 /* OBS1 -> obs.mpos (posicao do agente)*/
@@ -98,6 +85,12 @@ Condicoes:
 /*         Alem de tudo do OBS3*/
 /* OBS3 -> obs.terremoto (flag de terremoto)*/
 /* OBS4 -> completamente obscuro! */
+/*
+- OBS0 e OBS1 sao mundos completamente observaveis. A diferenca esta em conhecer a medida de desempenho e poder ler os
+seus pontos durante a execucao (OBS0)
+- OBS2 tem uma dica de sala suja, que eh um sensor que capta sujeira a distancia
+- OBS3 e OBS4 sao identicos se os terremotos estao desabilitados (parametros DETTERREMOTOBASICO ou DETTERREMOTOTOTAL)
+*/
 #define OBS0 0
 #define OBS1 1
 #define OBS2 2
@@ -107,16 +100,17 @@ Condicoes:
 /*
   0-deterministico
   1-se suja com probabilidade p_sujar
-  2-mecanismo de aspirar e assoprar falha com probabilidade p_mecanica
-  3-sensores falham com probabilidade p_sensorial de erro
-  4-terremoto com probabilidade p_terremoto
+  2-mecanismo de aspirar e assoprar falha com probabilidade p_sensorial
+  4-mecanismo de movimento falha com probabilidade p_movimento
+  8-sensores falham com probabilidade p_sensorial de erro
+  16-terremoto com probabilidade p_terremoto, mas nao ocorrem apos leituras
+  32-terremoto com probabilidade p_terremoto, ocorrem a qualquer tempo
+  64-capacidade variavel do saco entre teto(qtd_sala/3) e (qtd_sala-1)
 
   Combine as opcoes com ou-binario.
   Exemplo: se deseja sujeira e terremoto:
-  DETSUJEIRA|DETTERREMOTO
+  DETSUJEIRA|DETTERREMOTOBASICO
 */
-
-
 #define DETERMINISTICO       0  /*0b000 0000 nada acontece*/
 #define DETSUJEIRA           1  /*0b000 0001 p_suja*/
 #define DETSUCCAO            2  /*0b000 0010 p_succao*/
@@ -124,7 +118,34 @@ Condicoes:
 #define DETSENSORES          8  /*0b000 1000 p_sensorial*/
 #define DETTERREMOTOBASICO  16  /*0b001 0000 p_terremoto apos acoes, mas nao apos sensores*/
 #define DETTERREMOTOTOTAL   32  /*0b010 0000 p_terremoto a qualquer momento*/
-#define DETCAPACIDADE       64  /*0b100 0000 p_terremoto a qualquer momento*/
+#define DETCAPACIDADE       64  /*0b100 0000 capacidade variavel do saco entre teto(qtd_sala/3) e (qtd_sala-1)*/
+
+ /*conhecimento inicial do mundo:
+ 6-nada,
+ 5-qtd_sala
+ 4-menor_sala, maior_sala,
+ 3-mpos
+ 2-sujeiras,
+ 1-capasaco,
+ 0-md, proba, sala desc*/
+#define APRIORI6 6
+#define APRIORI5 5
+#define APRIORI4 4
+#define APRIORI3 3
+#define APRIORI2 2
+#define APRIORI1 1
+#define APRIORI0 0
+
+/* Funcao descarga desabilitada*/
+#define DESC0 0
+/* Funcao descarga habibilitada*/
+#define DESC1 1
+
+/* Folga de 100 iteracoes apos as 1000 originais*/
+#define FOLGA1 1
+/* Sem folga */
+#define FOLGA0 0
+
 
 /* --------------------------- */
 typedef struct
@@ -169,7 +190,7 @@ extern int ler_chamado(void);
 extern int finalizar_ambiente(void);
 extern int pontos(void);
 extern int qtd_acoes(void);
-extern int inicializar_ambiente(int niveldet, int nivelobs, int qs, int apriori, int funcdes, desempenho *mdext, probabilidade *prext);
+extern int inicializar_ambiente(int nivelobs, int niveldet, int qs, int apriori, int funcdes, int folga, desempenho *mdext, probabilidade *prext);
 extern int mostrar_pontos(void);
 extern void gastos(int *qtd_andar, int *qtd_ler, int *qtd_aspirar, int *qtd_assoprar, int *qtd_passarvez, int *qtd_limpar, int *qtd_descarregar, int *qtd_bonus, int *qtd_tempolimpo);
 
@@ -231,7 +252,7 @@ Tipo: externa
 entrada: nada
 saida: 1 se a sala eh de descarga, 0 se nao eh, e -1 se erro
 indica verdadeiro ou falso para a sala atual ser de descarga.
-Não é utilizada em ambientes com 2 salas, caso que retorna 0
+NÃ£o Ã© utilizada em ambientes com 2 salas, caso que retorna 0
 */
 //int ler_descarga(void);
 

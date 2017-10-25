@@ -7,7 +7,7 @@
 /* compile com c:\dev-cpp\bin\gcc.exe libaspipo.c -o libaspipo.o -c       */
 
 /* Ambiente Aspipo:
-            
+
 Acoes do Aspipo:
       esquerda() - perde 2 ponto de energia.
       direita() - perde 2 ponto de energia.
@@ -19,7 +19,7 @@ Sensores do Aspipo:
       ler_sujeira() - perde 1 ponto de energia.
       ler_posicao() - perde 1 ponto de energia.
       terremoto - variavel inteira que sente terremotos.
-      
+
 Reacoes do Ambiente:
       Barra o Aspipo, se ele trombar na parede ao tentar andar para fora do limite.
       Limpa o ambiente, se o Aspipo aspirar.
@@ -35,7 +35,7 @@ Acoes independentes do Ambiente:
 
 Bugs:
   Como se comporta se ligar DETTERREMOTOBASICO e DETTERREMOTOTOTAL? Fica valendo o total
-      
+
 */
 
 #include "libaspipo.h"
@@ -52,7 +52,7 @@ Bugs:
 static int terremoto;
 static int inicializou = 0;
 static int temnosaco; /*zera quando assopra*/
-static int acoes, acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez, qtd_bonus, qtd_limpou, qtd_descarregou, qtd_tempolimpo; /*contadores*/
+static int acoes=0, acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez, qtd_bonus, qtd_limpou, qtd_descarregou, qtd_tempolimpo; /*contadores*/
 static int pos_aspipo;
 static int sala[QTDSALA]; /* sala[A]=sala[B]=suja */
 static int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; /*pesos*/
@@ -62,7 +62,7 @@ static int flag_bonus;
 observavel obs;
 desempenho md;
 probabilidade pr;
-static int NIVELDET, NIVELOBS, APRIORI, FUNCDES;
+static int NIVELDET, NIVELOBS, APRIORI, FUNCDES, FOLGA;
 
 /*
 funcao void inicializar_apriori(void)
@@ -97,20 +97,19 @@ void inicializar_apriori(void)
   obs.p_succao=0.0;      /*probabilidade de erro em assoprar/aspirar*/
   obs.p_movimento=0.0;   /*probabilidade de erro em andar*/
   obs.p_sensorial=0.0;   /*probabilidade de erro em leitura de sensores*/
-  
+
   /*atualizar o conhecimento de acordo com parametro*/
-  /*conhecimento inicial do mundo:
-   5-nada, 4-mpos, qtd_sala,  3-menor_sala, maior_sala, 2-sujeiras, 1-capasaco, 0-md, proba, sala desc*/
-  if(APRIORI<=APRIORI4) /*mpos e qtd_sala*/
-  {
-    obs.mpos=pos_aspipo;
+ /*conhecimento inicial do mundo:
+ 6-nada, 5-qtd_sala, 4-menor_sala, maior_sala, 3-mpos, 2-sujeiras, 1-capasaco, 0-md, proba, sala desc*/
+  if(APRIORI<=APRIORI5) /*qtd_sala*/
     obs.qtd_sala=qtd_sala;
-  }
-  if(APRIORI<=APRIORI3) /*sala menor e sala maior*/
+  if(APRIORI<=APRIORI4) /*sala menor e sala maior*/
   {
     obs.menor_sala=menor_sala;
     obs.maior_sala=maior_sala-1; /*Bug: confuso. No agente, sala valida. Aqui, limite superior 'exclusive' */
   }
+  if(APRIORI<=APRIORI3) /*mpos*/
+    obs.mpos=pos_aspipo;
   if(APRIORI<=APRIORI2) /*sujeira compartilhada*/
     for(i=menor_sala; i<maior_sala; i++)
       obs.sala[i]=sala[i];
@@ -180,6 +179,23 @@ void atualiza_observavel(void)
   }
 }
 
+/*
+funcao int naoiniciou(void)
+Tipo: interna
+entrada: nada
+saida: 0 se iniciou, -1 se nao iniciou
+testa se ambiente foi inicializado para comecar simulacao nova
+*/
+int naoiniciou(void)
+{
+  if(inicializou==0)
+  {
+    printf("Ambiente nao esta pronto para acoes.\n");
+    printf("----------- agente (%d): \n", acoes);
+    return -1;
+  }
+  return 0;
+}
 
 /*
 | 63| 64| 65| 66|
@@ -189,7 +205,9 @@ void atualiza_observavel(void)
 void imprimir_ambiente(void)
 {
   int s, l;
-  if(naoiniciou()) return;
+//  if(naoiniciou()) return;
+  if(inicializou==0)
+    return;
   for(l=0; l<3; l++)
   {
     if(l==0)
@@ -227,15 +245,17 @@ void imprimir_ambiente(void)
 funcao int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vdesc, int vbonus, float psujar, float pterremoto)
 Tipo: interna (a decidir. No momento, interna)
 entrada: sala, andar, sentir, aspirar, assoprar, passarvez, limpar, descarrecar bonus, sujar, terremoto
-saida: 0 
+saida: 0
 */
 int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vdesc, int vbonus, int vtempolimpo, float psujar, float pterremoto, float psuccao, float pmovimento, float psensorial)
 {
   int i, capamin, capamax;
-  printf("----------- agente (acao: 0): \n");
+  printf("----------- agente (0): \n");
   printf("inicializar_ambiente()\n");
   printf("----------- ambiente: \n");
-  printf("----------- Inicializacoes do ambiente: \n");
+  printf("\n");
+  printf("----------- Configuracoes do ambiente: \n\n");
+  printf("--> Inicializacoes do ambiente: \n");
   if(DEBUG>=1) printf("qtdsala=%d\nMD: v_andar=%d, v_ler=%d, v_aspirar=%d, v_assoprar=%d, v_passarvez=%d, v_limpar=%d, v_desc=%d, v_bonus=%d, v_tempolimpo=%d\nProbabilidades: p_sujar=%.6f, p_terremoto=%.6f, p_succao=%.6f, p_movimento=%.6f, p_sensorial=%.6f\n", qtdsala, vandar, vler, vaspirar, vassoprar, vpassarvez, vlimpar, vdesc, vbonus, vtempolimpo, psujar, pterremoto, psuccao, pmovimento, psensorial);
   inicializou = 1;
 
@@ -256,20 +276,22 @@ int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassopr
     /*
     capasaco=qtd_sala; era
     Num. Salas / Cap. Min / Cap. Max
-    02 / 1 / 1
-    03 / 1 / 2
-    04 / 2 / 3
-    05 / 2 / 4
-    06 / 2 / 5
-    07 / 3 / 6
-    08 / 3 / 7
-    09 / 3 / 8
-    10 / 4 / 9
+    02 / 1 / 1 |0.66 +0.7 = 1.16
+    03 / 1 / 2 |1.00 +0.7 = 1.70
+    04 / 2 / 3 |1.33 +0.7 = 2.03
+    05 / 2 / 4 |1.66 +0.7 = 2.36
+    06 / 2 / 5 |2.00 +0.7 = 2.70
+    07 / 3 / 6 |2.33 +0.7 = 3.03
+    08 / 3 / 7 |2.66 +0.7 = 3.36
+    09 / 3 / 8 |3.00 +0.7 = 3.70
+    10 / 4 / 9 |3.33 +0.7 = 4.03
     */
-    //capamin=round(qtd_sala/3.0+0.2);
     if(NIVELDET&DETCAPACIDADE) /*se escolheu esta opcao estocastica*/
     {
-      capamin=ceil(qtd_sala/3.0);
+      capamin=(int)(qtd_sala/3.0+0.7); //int trunca
+      //evitar compilar com -lm soh por causa dessas duas funcoes:
+      //capamin=round(qtd_sala/3.0+0.2);
+      //capamin=ceil(qtd_sala/3.0);
       capamax=qtd_sala-1;
       capasaco=rand()%(capamax-capamin+1)+capamin;
     }
@@ -332,6 +354,7 @@ int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassopr
   acao_andar=acao_ler=acao_aspirar=acao_assoprar=acao_passarvez=0;
   pos_aspipo=menor_sala+rand()%qtd_sala;
   if(DEBUG>=1) printf("Posicao Inicial do ASPIPO: %d\n",pos_aspipo);
+  printf("\n");
   v_andar=vandar;
   v_ler=vler;
   v_aspirar=vaspirar;
@@ -348,9 +371,8 @@ int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassopr
 
   /* conhecimento a priori do mundo */
   inicializar_apriori();
-  
-  printf("----------- Configuracoes do ambiente: \n");
-  printf("----Conhecimento a priori nivel (0-Tudo, 5-Nada): %d\n", APRIORI);
+
+  printf("--> Conhecimento a priori nivel (0-Tudo, 5-Nada): %d\n", APRIORI);
   /*conhecimento inicial do mundo: 5-nada, 4-mpos, qtd_sala,  3-menor_sala, maior_sala, 2-sujeiras, 1-capasaco, 0-md, proba, sala desc*/
   if(APRIORI==5)
     printf("Nadica de nada!\n");
@@ -365,7 +387,7 @@ int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassopr
   if(APRIORI==0)
     printf("pesos da medida de desempenho e probabilidades dos eventos do ambiente\n");
 
-  printf("\n----Deterministico x Estocastico nivel (0-Deterministico, 127-Estocastico): %d\n", NIVELDET);
+  printf("\n--> Deterministico x Estocastico nivel (0-Deterministico, 127-Estocastico): %d\n", NIVELDET);
   printf("Adicione o valor da opcao para obter o nivel:\n");
   printf(" 0 - Completamente Deterministico\n");
   printf(" 1 - Ambiente se suja com probabilidade p_sujar\n");
@@ -376,7 +398,7 @@ int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassopr
   printf("32 - Ocorrem terremotos com probabilidade p_terremoto a qualquer tempo\n");
   printf("64 - Capacidade do saco variavel\n");
 
-  printf("\n----Observavel x Obscuro nivel (0-Observavel, 4-Obscuro): %d\n", NIVELOBS);
+  printf("\n--> Observavel x Obscuro nivel (0-Observavel, 4-Obscuro): %d\n", NIVELOBS);
   if(NIVELOBS==4)
     printf("Completamente obscuro!\n");
   if(NIVELOBS<=3)
@@ -404,13 +426,27 @@ int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassopr
     printf("(valores das probabilidades dos eventos do ambiente)\n");
   }
 
-  printf("\n----Sala de Descarga: %s\n", (FUNCDES?"sim":"nao"));
+  printf("\n--> Sala de Descarga: %s\n", (FUNCDES?"sim":"nao"));
   if(FUNCDES)
-    printf("Funcao ler_descarga() habilitada\nCapacidade do saco entre [teto(qtdsala/3), (qtdsala-1)]\n\n");
+    printf("Funcao ler_descarga() habilitada\nCapacidade do saco entre [teto(qtdsala/3), (qtdsala-1)]\n");
   else
-    printf("Funcao ler_descarga() desabilitada\nCapacidade do saco infinita\n\n");
+    printf("Funcao ler_descarga() desabilitada\nCapacidade do saco infinita\n");
   /* desabilita a sala de descarga, ler_descarga(), capacidade do saco infinita */
 
+
+  printf("\n--> Folga: %s\n", (FOLGA?"sim":"nao"));
+  if(!FOLGA)
+  {
+    printf("Acao maxima util: %d\n", MAXACOES);
+    printf("Programa ignora acoes entre %d e %d\n", MAXACOES+1, MAXACOESFINAL);
+    printf("Programa aborta na acao %d se nao chamar finalizar_ambiente() no maximo na acao %d\n\n", MAXACOESFINAL+1, MAXACOESFINAL);
+  }
+  else
+  {
+    printf("Acao maxima util: %d\n", MAXACOESFINAL-1);
+    printf("Entre %d e %d, o ambiente nao se suja, nem ocorrem terremotos caso habilitados\n", MAXACOES+1, MAXACOESFINAL);
+    printf("Programa aborta na acao %d se nao chamar finalizar_ambiente() no maximo na acao %d\n\n", MAXACOESFINAL+1, MAXACOESFINAL);
+  }
 
   /*
   | 63| 64| 65| 66|
@@ -427,9 +463,9 @@ int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassopr
 funcao int inicializa_ambiente(void)
 Tipo: externa
 entrada: quantidade de salas desejada, ou 0 para aleatorio
-saida: 0 
+saida: 0
 */
-int inicializar_ambiente(int niveldet, int nivelobs, int qs, int apriori, int funcdes, desempenho *mdext, probabilidade *prext)
+int inicializar_ambiente(int nivelobs, int niveldet, int qs, int apriori, int funcdes, int ffolga, desempenho *mdext, probabilidade *prext)
 {
   int vandar, vler, vaspirar, vassoprar, vpassarvez, vlimpar, vdesc, vbonus, vtempolimpo;
   float psujar, pterremoto, psuccao, pmovimento, psensorial;
@@ -438,22 +474,7 @@ int inicializar_ambiente(int niveldet, int nivelobs, int qs, int apriori, int fu
     qtd_sala=rand()%9+2; /*de 2 a 10 salas */
   else
     qtd_sala=qs;
-    
-  /*
-   0-deterministico
-   1-suja com probabilidade p_sujar
-   2-mecanismo de aspirar e assoprar falha com probabilidade p_succao
-   4-mecanismo de andar falha com probabilidade p_movimento
-   8-sensores falham com probabilidade p_sensorial de erro
-  16-terremotos com probabilidade p_terremoto, apos acoes, nao apos leituras
-  32-terremotos com probabilidade p_terremoto, a qualquer tempo
 
-  Combinacoes binarias entre eles sao validas
-  */
-  if(niveldet<0||niveldet>127)
-    NIVELDET=0;
-  else
-    NIVELDET=niveldet;
   /*
   0-completamente observavel,
   1-sem medida de desempenho e sem mostrar_pontos()
@@ -465,16 +486,41 @@ int inicializar_ambiente(int niveldet, int nivelobs, int qs, int apriori, int fu
     NIVELOBS=0;
   else
     NIVELOBS=nivelobs;
+
+    /*
+   0-deterministico
+   1-suja com probabilidade p_sujar
+   2-mecanismo de aspirar e assoprar falha com probabilidade p_succao
+   4-mecanismo de andar falha com probabilidade p_movimento
+   8-sensores falham com probabilidade p_sensorial de erro
+  16-terremotos com probabilidade p_terremoto, apos acoes, nao apos leituras
+  32-terremotos com probabilidade p_terremoto, a qualquer tempo
+  64-Capacidade do saco variavel entre teto(qtd_sala/3) e (qtd_sala-1), ou fixa em (qtd_sala-1) c.c.
+
+  Combinacoes binarias entre eles sao validas
+  */
+  if(niveldet<0||niveldet>127)
+    NIVELDET=0;
+  else
+    NIVELDET=niveldet;
+
   /*conhecimento inicial do mundo: 5-nada, 4-mpos, qtd_sala,  3-menor_sala, maior_sala, 2-sujeiras, 1-capasaco, 0-md, proba, sala desc*/
-  if(apriori<APRIORI0||apriori>APRIORI5)
+  if(apriori<APRIORI0||apriori>APRIORI6)
     APRIORI=0; /*default sem conhecimento*/
   else
     APRIORI=apriori;
+
   /* desabilita a sala de descarga, ler_descarga(), capacidade do saco infinita */
   if(funcdes!=0&&funcdes!=1)
     FUNCDES=1; /*habilitada por default*/
   else
     FUNCDES=funcdes;
+
+  /* desabilita a sala a folga de MAXACOESFINAL, terminando o agente em exatas MAXACOES */
+  if(ffolga!=0&&ffolga!=1)
+    FOLGA=0; /*desabilitada por default*/
+  else
+    FOLGA=ffolga;
 
   if(qtd_sala==2&&FUNCDES)
     fprintf(stderr,"%s","Aviso: ambiente de apenas 2 salas, sendo uma delas de descarga!\n");
@@ -515,6 +561,8 @@ int inicializar_ambiente(int niveldet, int nivelobs, int qs, int apriori, int fu
     psuccao=prext->p_succao;
     pmovimento=prext->p_movimento;
     psensorial=prext->p_sensorial;
+ //bug: como inicializar so alguns, e deixar outros default? probabilidade p={0};
+//    printf("%f, %f, %f, %f\n\n", prext->p_terremoto, prext->p_succao, prext->p_movimento, prext->p_sensorial);
   }
   else
   {
@@ -532,7 +580,7 @@ int inicializar_ambiente(int niveldet, int nivelobs, int qs, int apriori, int fu
 funcao void ambiente(int acao)
 Tipo: interna
 entrada: acao do agente: 1 ler_posicao, 0 c.c.
-saida: nada 
+saida: nada
 */
 static void ambiente(int tacao)
 {
@@ -540,24 +588,46 @@ static void ambiente(int tacao)
   int i, sujousala;
   long penal;
 
-  ++acoes; /*contem o numero da proxima acao do agente */
+//  ++acoes; *contem o numero da proxima acao do agente * transferido para cada acao
+  if(!FOLGA && acoes==MAXACOES+1) /* fara acao 1001! */
+  {
+    printf("Acabaram as acoes. Deve finalizar_ambiente() imediatamente!\n");
+    atualiza_observavel(); /* atualiza variaveis observaveis por opcao NIVELOBS*/
+    imprimir_ambiente();
+    inicializou=0; /*nao chama mais a funcao ambiente() */
+    printf("----------- agente (%d): \n", acoes);
+    return;
+  }
+
   if(acoes>MAXACOESFINAL) /*a proxima acao do agente sera 1101!*/
   {
-    fprintf(stderr,"%d %s", acoes, "acoes! Abortando...\n");
-    printf("----------- agente (%d): \n", acoes);  /*1101*/
-    printf("%d acoes! Abortando!\n", acoes);
+    fprintf(stderr,"(stderr) %d %s", acoes, "acoes! Abortando...\n");
     imprimir_ambiente();
+    printf("----------- agente (%d): \n", acoes);  /*1101*/
+//    printf("%d acoes! Abortando!\n", acoes);
     finalizar_ambiente();
     printf("Finalizacao forcada! Perdeu todos pontos...\n");
     penal=(long)pontos();
-    printf("Perda dos pontos: %ld\n", -abs(penal));
+    printf("Perda dos pontos: %d\n", -abs(penal));
     printf("Penalidade por estouro de acoes: -10000\n");
     printf("Resultado final: seu agente fez %ld pontos\n", penal-abs(penal)-10000);
     printf("Abortando o programa\n");
     exit(0);
   }
 
-  //calcular o bonus tudo limpo, e ponto por sala limpa por tempo
+  terremoto=0;
+
+  /*ainda atualiza a acao 1000, e estabiliza nela, porem apos bonus*/
+  /*proxima acao 1002 em diante, ja esta estavel*/
+  if(acoes>=MAXACOES+2) /*a proxima acao do agente sera a 1002*/
+  {
+    atualiza_observavel(); /* atualiza variaveis observaveis por opcao NIVELOBS*/
+    imprimir_ambiente();
+    printf("----------- agente (%d): \n", acoes);  /*1001*/
+    return;
+  }
+
+  //calcular o bonus tudo limpo, e ponto por sala limpa por tempo - bonus nao conta no tempo extra!
   flag_bonus=1; /*sim, ganha!*/
   for(i=menor_sala; i<maior_sala; i++)
     if(sala[i]==0) /* achou limpa */
@@ -568,36 +638,10 @@ static void ambiente(int tacao)
   if(flag_bonus)
   {
     qtd_bonus++;
-    if(DEBUG>=1) printf("Ganhou bonus por manter todas salas limpas!\n");
+    if(v_bonus)
+      if(DEBUG>=1) printf("Ganhou bonus por manter todas salas limpas!\n");
   }
-  
-  terremoto=0;
-  /*
-   0-deterministico
-   1-suja com probabilidade p_sujar
-   2-mecanismo de aspirar e assoprar falha com probabilidade p_succao
-   4-mecanismo de andar falha com probabilidade p_movimento
-   8-sensores falham com probabilidade p_sensorial de erro
-  16-terremotos com probabilidade p_terremoto, apos acoes, nao apos leituras
-  32-terremotos com probabilidade p_terremoto, a qualquer tempo
 
-  Combinacoes binarias entre eles sao validas
-  */
-  
-  if(acoes>=MAXACOES+1) /*a proxima acao do agente sera a 1001*/
-  {
-    if(acoes==MAXACOES+1)
-    {
-      /*se escolheu algo que altere o ambiente, esteja avisado */
-      if(NIVELDET|DETSUJEIRA|DETTERREMOTOBASICO|DETTERREMOTOTOTAL)
-        printf("O ambiente se tornou estavel para sujeiras e terremotos.\n");
-      printf("O agente tem ate %d acoes para finalizar_ambiente() antes do programa abortar\n", MAXACOESFINAL);
-    }
-    atualiza_observavel(); /* atualiza variaveis observaveis por opcao NIVELOBS*/
-    imprimir_ambiente();
-    printf("----------- agente (%d): \n", acoes);  /*1001*/
-    return;
-  }
   if(NIVELDET==DETERMINISTICO)
   {
     atualiza_observavel(); /* atualiza variaveis observaveis por opcao NIVELOBS*/
@@ -619,6 +663,13 @@ static void ambiente(int tacao)
         printf("terremoto!\n");
         if(DEBUG>=1) printf("Tudo sujo! Aspipo na sala %d\n", pos_aspipo);
         terremoto=1;
+        /*a proxima acao do agente sera a 1001, entao avisa que estabiliou agora na 1000*/
+        if(acoes==MAXACOES+1)
+        {
+          if(NIVELDET|DETSUJEIRA|DETTERREMOTOBASICO|DETTERREMOTOTOTAL)
+            printf("O ambiente se tornou estavel para sujeiras e terremotos.\n");
+          printf("O agente tem ate %d acoes para finalizar_ambiente() antes do programa abortar\n", MAXACOESFINAL);
+        }
         atualiza_observavel(); /* atualiza variaveis observaveis por opcao NIVELOBS*/
         imprimir_ambiente();
         printf("----------- agente (%d): \n", acoes);
@@ -645,27 +696,18 @@ static void ambiente(int tacao)
       else printf("Algumas salas se sujaram\n");
   }
 
+  /*a proxima acao do agente sera a 1001, entao avisa que estabiliou agora na 1000*/
+  if(acoes==MAXACOES+1)
+  {
+    /*se escolheu algo que altere o ambiente, esteja avisado */
+    if(NIVELDET|DETSUJEIRA|DETTERREMOTOBASICO|DETTERREMOTOTOTAL)
+      printf("O ambiente se tornou estavel para sujeiras e terremotos.\n");
+    printf("O agente tem ate %d acoes para finalizar_ambiente() antes do programa abortar\n", MAXACOESFINAL);
+  }
   atualiza_observavel(); /* atualiza variaveis observaveis por opcao NIVELOBS*/
   imprimir_ambiente();
   printf("----------- agente (%d): \n", acoes);
 } /* ambiente() */
-
-/*
-funcao int naoiniciou(void)
-Tipo: interna
-entrada: nada
-saida: 0 se iniciou, -1 se nao iniciou
-testa se ambiente foi inicializado para comecar simulacao nova
-*/
-int naoiniciou(void)
-{
-  if(inicializou==0)
-  {
-    printf("Ambiente nao esta pronto.\n");
-    return -1;
-  }
-  return 0;
-}
 
 /*
 funcao void mostrar_pontos(void)
@@ -702,6 +744,7 @@ int esquerda(void)
   float s;
   printf("esquerda()\n");
   printf("----------- ambiente: \n");
+  ++acoes;
   if(naoiniciou()) return -1;
   acao_andar++;
   if(NIVELDET&DETMOVIMENTO)
@@ -742,6 +785,7 @@ int direita(void)
   float s;
   printf("direita()\n");
   printf("----------- ambiente: \n");
+  ++acoes;
   if(naoiniciou()) return -1;
   acao_andar++;
   if(NIVELDET&DETMOVIMENTO)
@@ -758,7 +802,7 @@ int direita(void)
   }
   if(pos_aspipo<maior_sala-1)
   {
-    pos_aspipo++;      
+    pos_aspipo++;
     if(DEBUG>=1) printf("Andou para sala %d\n", pos_aspipo);
   }
   else
@@ -782,6 +826,7 @@ int ler_sujeira(void)
   float s;
   printf("ler_sujeira()\n");
   printf("----------- ambiente: \n");
+  ++acoes;
   if(naoiniciou()) return -1;
   acao_ler++;
   r=sala[pos_aspipo]; /*sala de descarga sempre cheia*/
@@ -813,6 +858,7 @@ int ler_posicao(void)
   float s;
   printf("ler_posicao()\n");
   printf("----------- ambiente: \n");
+  ++acoes;
   if(naoiniciou()) return -1;
   acao_ler++;
   r=pos_aspipo;
@@ -845,6 +891,7 @@ int ler_descarga(void)
   float s;
   printf("ler_descarga()\n");
   printf("----------- ambiente: \n");
+  ++acoes;
   if(naoiniciou()) return -1;
   acao_ler++;
   if(!FUNCDES)
@@ -856,7 +903,7 @@ int ler_descarga(void)
   if(pos_aspipo==descarga_sala)
     r=1;
   else
-    r=0;    
+    r=0;
   if(NIVELDET&DETSENSORES)
   {
     s=((float)rand()/(float)RAND_MAX);
@@ -886,6 +933,7 @@ int ler_chamado(void)
   float s;
   printf("ler_chamado()\n");
   printf("----------- ambiente: \n");
+  ++acoes;
   if(naoiniciou()) return -1;
 
   acao_ler++;
@@ -946,6 +994,7 @@ int aspirar(void)
   float s;
   printf("aspirar()\n");
   printf("----------- ambiente: \n");
+  ++acoes;
   if(naoiniciou()) return -1;
   acao_aspirar++;
   if(NIVELDET&DETSUCCAO)
@@ -987,7 +1036,7 @@ int aspirar(void)
   ambiente(0);
   return 0;
 }
- 
+
 /*
 funcao int passar_vez(void)
 Tipo: externa
@@ -999,6 +1048,7 @@ int passar_vez(void)
 {
   printf("passar_vez()\n");
   printf("----------- ambiente: \n");
+  ++acoes;
   if(naoiniciou()) return -1;
   acao_passarvez++;
   if(DEBUG>=1) printf("Passou a vez.\n");
@@ -1020,6 +1070,7 @@ int assoprar(void)
   float s;
   printf("assoprar()\n");
   printf("----------- ambiente: \n");
+  ++acoes;
   if(naoiniciou()) return -1;
   acao_assoprar++;
   if(NIVELDET&DETSUCCAO)
@@ -1081,15 +1132,15 @@ int pontos(void)
   }
   if(DEBUG>=1)
   {
-    printf("\nAndadas                        =%4d * %6d\n", acao_andar, v_andar);
-    printf("Leituras                       =%4d * %6d\n", acao_ler, v_ler);
-    printf("Aspiradas                      =%4d * %6d\n", acao_aspirar, v_aspirar);
-    printf("Assopradas                     =%4d * %6d\n", acao_assoprar, v_assoprar);
-    printf("Passadas de vez                =%4d * %6d\n", acao_passarvez, v_passarvez);
-    printf("Limpezas                       =%4d * %6d\n", qtd_limpou, v_limpar);
-    printf("Descargas                      =%4d * %6d\n", qtd_descarregou, v_desc);
-    printf("Bonus Tudo Limpo               =%4d * %6d\n", qtd_bonus, v_bonus);
-    printf("Ponto por sala limpa por tempo =%4d * %6d\n\n", qtd_tempolimpo, v_tempolimpo);
+    printf("\nAndadas                        =%4d * %6d = %7d\n", acao_andar, v_andar, acao_andar*v_andar);
+    printf("Leituras                       =%4d * %6d = %7d\n", acao_ler, v_ler, acao_ler*v_ler);
+    printf("Aspiradas                      =%4d * %6d = %7d\n", acao_aspirar, v_aspirar, acao_aspirar*v_aspirar);
+    printf("Assopradas                     =%4d * %6d = %7d\n", acao_assoprar, v_assoprar, acao_assoprar*v_assoprar);
+    printf("Passadas de vez                =%4d * %6d = %7d\n", acao_passarvez, v_passarvez, acao_passarvez*v_passarvez);
+    printf("Limpezas                       =%4d * %6d = %7d\n", qtd_limpou, v_limpar, qtd_limpou*v_limpar);
+    printf("Descargas                      =%4d * %6d = %7d\n", qtd_descarregou, v_desc, qtd_descarregou*v_desc);
+    printf("Bonus Tudo Limpo               =%4d * %6d = %7d\n", qtd_bonus, v_bonus, qtd_bonus*v_bonus);
+    printf("Ponto por sala limpa por tempo =%4d * %6d = %7d\n\n", qtd_tempolimpo, v_tempolimpo, qtd_tempolimpo*v_tempolimpo);
     printf("Seu agente fez %d pontos\n\n", r);
   }
   return r;
@@ -1104,10 +1155,56 @@ usada para encerrar a simulacao
 */
 int finalizar_ambiente(void)
 {
+  int flag_bonus, i;
   printf("finalizar_ambiente()\n");
   printf("----------- ambiente: \n");
-  if(naoiniciou()) return -1;
+
+  if((inicializou==0 && FOLGA) || (acoes==0 && !FOLGA))
+  {
+    printf("Precisa inicializar_ambiente() primeiro.\n");
+    return -1;
+  }
   printf("Finalizada a simulacao.\n");
+
+  //calcular o ultimo bonus tudo limpo apos finalizado
+  flag_bonus=1; /*sim, ganha!*/
+  for(i=menor_sala; i<maior_sala; i++)
+    if(sala[i]==1&&descarga_sala!=i) /*achou suja, nao ganha bonus, sala de descarga nao conta */
+      flag_bonus=0;
+  if(flag_bonus)
+  {
+    if(FUNCDES) /*tem descarga, bonus mais dificil!*/
+    {
+      if(pos_aspipo==descarga_sala)
+      {
+        qtd_bonus+=10;
+        if(v_bonus)
+          if(DEBUG>=1) printf("Ganhou 10 X bonus por finalizar com todas salas limpas e agente na sala de descarga!\n");
+      }
+      else
+      {
+        qtd_bonus+=5;
+        if(v_bonus)
+          if(DEBUG>=1) printf("Ganhou 5 X bonus por finalizar com todas salas limpas!\n");
+      }
+    }
+    else
+    {
+      if(pos_aspipo==menor_sala)
+      {
+        qtd_bonus+=10;
+        if(v_bonus)
+          if(DEBUG>=1) printf("Ganhou 10 X bonus por finalizar com todas salas limpas e agente na sala da esquerda!\n");
+      }
+      else
+      {
+        qtd_bonus+=5;
+        if(v_bonus)
+          if(DEBUG>=1) printf("Ganhou 5 X bonus por finalizar com todas salas limpas!\n");
+      }
+    }
+  }
+
   printf("-------------------------------------------------------\n");
   inicializou = 0;
   return 0;
@@ -1125,28 +1222,20 @@ int qtd_acoes(void)
   if(DEBUG>=2) printf("qtd_acoes()\n");
   if(inicializou==0)
   {
-    ++acoes;
-    if(acoes>=MAXACOESFINAL) /*a proxima acao do agente sera 1101!*/
+    if(acoes>MAXACOESFINAL) /*a proxima acao do agente sera 1101!*/
     {
-//      printf("----------- ambiente: \n");
-      fprintf(stderr,"%d %s", acoes, "acoes! Abortando...\n");
-      printf("%d acoes! Abortando!\n", acoes);
+      fprintf(stderr,"(stderr) %d %s", acoes, "acoes! Abortando...\n");
+      printf("Abortando programa apos %d acoes.\n", acoes);
+      imprimir_ambiente();
       penal=(long)pontos();
-      printf("Perda dos pontos: %ld\n", -abs(penal));
+      printf("Perda dos pontos: %d\n", -abs(penal));
       printf("Penalidade por estouro de acoes: -10000\n");
-      printf("Penalidade por reincidencia apos aviso: %ld\n", acoes);
-      printf("Resultado final: seu agente fez %ld pontos\n", penal-abs(penal)-10000-acoes);
+      printf("Resultado final: seu agente fez %ld pontos\n", penal-abs(penal)-10000);//-acoes);
       printf("Abortando o programa\n");
       exit(0);
     }
     else
-    {
-      printf("----------- ambiente: \n");
-      printf("Aviso: ambiente finalizado!\n");
-      imprimir_ambiente();
-      printf("----------- agente (%d): \n", acoes);  /*1101*/
       return acoes;
-    }
   }
   if(DEBUG>=2) printf("Restam %d acoes antes do ambiente estabilizar.\n",((MAXACOES-acoes)<0?0:(MAXACOES-acoes)));
   return acoes;
