@@ -43,6 +43,7 @@ Bugs:
 #include <stdio.h>
 #include <time.h>
 #include <math.h>
+#include <unistd.h> /* conferir compatibilidade com windows em getpid() */
 
 #define LIMPA 0
 #define SUJA 1
@@ -469,7 +470,9 @@ int inicializar_ambiente(int nivelobs, int niveldet, int qs, int apriori, int fu
 {
   int vandar, vler, vaspirar, vassoprar, vpassarvez, vlimpar, vdesc, vbonus, vtempolimpo;
   float psujar, pterremoto, psuccao, pmovimento, psensorial;
-  srand(rand()%10+time(NULL));
+  
+  srand(time(NULL)+getpid());
+
   if(qs<2||qs>10)
     qtd_sala=rand()%9+2; /*de 2 a 10 salas */
   else
