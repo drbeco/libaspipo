@@ -476,8 +476,10 @@ int inicializar_ambiente(int nivelobs, int niveldet, int qs, int apriori, int fu
 {
   int vandar, vler, vaspirar, vassoprar, vpassarvez, vlimpar, vdesc, vbonus, vtempolimpo;
   float psujar, pterremoto, psuccao, pmovimento, psensorial;
+  static int sr=-1;
   
-  srand(time(NULL)+getpid());
+  if((sr=(sr<0)))
+      srand(time(NULL)+getpid());
 
   if(qs<2||qs>10)
     qtd_sala=rand()%9+2; /*de 2 a 10 salas */
