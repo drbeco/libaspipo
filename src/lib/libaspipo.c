@@ -525,7 +525,7 @@ int inicializar_ambiente(int nivelobs, int niveldet, int qs, int apriori, int fu
   if(qtd_sala==2&&FUNCDES)
     fprintf(stderr,"%s","Aviso: ambiente de apenas 2 salas, sendo uma delas de descarga!\n");
 
-  /* sala, andar, sentir, aspirar, assoprar, passarvez, limpar, descarregar, bonus, sujar, terremoto */
+  /* sala, andar, sentir, aspirar, assoprar, passar_vez, limpar, descarregar, bonus, sujar, terremoto */
   //  inicializar_amb(qtd_sala, -2, -1, -40, -95, 0, 100, 1000, 0.05, 0.01);
   //   inicializar_amb(3, -10, -10, -10, 1000, 1000, -10, -10, 0.05, 0.01);
   //  if(mdext==NULL && prext==NULL)
@@ -692,8 +692,10 @@ static void ambiente(int tacao)
       }
     }
     if(sujousala==1)
+    {
       if(DEBUG>=1) printf("sujada(s)\n");
       else printf("Algumas salas se sujaram\n");
+    }
   }
 
   /*a proxima acao do agente sera a 1001, entao avisa que estabiliou agora na 1000*/
@@ -1132,15 +1134,15 @@ int pontos(void)
   }
   if(DEBUG>=1)
   {
-    printf("\nAndadas                        =%4d * %6d = %7d\n", acao_andar, v_andar, acao_andar*v_andar);
-    printf("Leituras                       =%4d * %6d = %7d\n", acao_ler, v_ler, acao_ler*v_ler);
-    printf("Aspiradas                      =%4d * %6d = %7d\n", acao_aspirar, v_aspirar, acao_aspirar*v_aspirar);
-    printf("Assopradas                     =%4d * %6d = %7d\n", acao_assoprar, v_assoprar, acao_assoprar*v_assoprar);
-    printf("Passadas de vez                =%4d * %6d = %7d\n", acao_passarvez, v_passarvez, acao_passarvez*v_passarvez);
-    printf("Limpezas                       =%4d * %6d = %7d\n", qtd_limpou, v_limpar, qtd_limpou*v_limpar);
-    printf("Descargas                      =%4d * %6d = %7d\n", qtd_descarregou, v_desc, qtd_descarregou*v_desc);
-    printf("Bonus Tudo Limpo               =%4d * %6d = %7d\n", qtd_bonus, v_bonus, qtd_bonus*v_bonus);
-    printf("Ponto por sala limpa por tempo =%4d * %6d = %7d\n\n", qtd_tempolimpo, v_tempolimpo, qtd_tempolimpo*v_tempolimpo);
+    printf("\nAndadas              =%6d * %6d = %7d {esquerda(), direita()}\n", acao_andar, v_andar, acao_andar*v_andar);
+    printf("Leituras             =%6d * %6d = %7d {ler_sujeira(), ler_posicao(), ler_descarga(), ler_chamado()}\n", acao_ler, v_ler, acao_ler*v_ler);
+    printf("Aspiradas            =%6d * %6d = %7d {aspirar()}\n", acao_aspirar, v_aspirar, acao_aspirar*v_aspirar);
+    printf("Assopradas           =%6d * %6d = %7d {assoprar()}\n", acao_assoprar, v_assoprar, acao_assoprar*v_assoprar);
+    printf("Passadas de vez      =%6d * %6d = %7d {passar_vez()}\n", acao_passarvez, v_passarvez, acao_passarvez*v_passarvez);
+    printf("Limpezas             =%6d * %6d = %7d {aspirar sala suja}\n", qtd_limpou, v_limpar, qtd_limpou*v_limpar);
+    printf("Descargas            =%6d * %6d = %7d {assoprar na sala de descarga}\n", qtd_descarregou, v_desc, qtd_descarregou*v_desc);
+    printf("Bonus Tudo Limpo     =%6d * %6d = %7d {todas salas limpas simultaneamente}\n", qtd_bonus, v_bonus, qtd_bonus*v_bonus);
+    printf("Ponto por sala limpa =%6d * %6d = %7d {tempo de cada sala limpa}\n\n", qtd_tempolimpo, v_tempolimpo, qtd_tempolimpo*v_tempolimpo);
     printf("Seu agente fez %d pontos\n\n", r);
   }
   return r;
