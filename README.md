@@ -38,3 +38,54 @@ This is the libaspipo library!
 
 ```
 
+## Compile
+
+The following commands assume you are in the working directory:
+
+```
+cd $ROOT/libaspipo/src/lib
+```
+
+### Agent
+
+```
+make asp o=aspiraassopra
+```
+
+It will generate the libraries if needed
+
+### Libraries
+
+```
+make libaspipo 
+```
+
+Generate all libraries for linux 32/64 bits and windows 32/64 bits into the current working directory `src/lib/`
+
+### Copy
+
+```
+make copy
+```
+
+Copy the libraries to the release folder `$ROOT/libaspipo/bin` and the newest `libaspipo.h` from source folder to the template folder
+
+### Tags
+
+```
+make tags 
+```
+
+Generate the file tag for the C source
+
+### Clean
+
+```
+make clean o=aspiraassopra
+```
+
+Delete all:
+    * libraries from the release and the current folder
+    * all binaries from the example agent (aspiraassopra) for 32/64 bits for both linux and windows
+
+

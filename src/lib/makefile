@@ -101,8 +101,8 @@ ifeq "$(DEBUG)" "2"
 CPPFLAGS += -D_XOPEN_SOURCE=700
 endif
 #--------------------- LDLIBS LD* and CCSHARED
-#LDLIBS = -Wl,--defsym,BUILD_$(DEFSYM)=0 -lm -lpthread -lncurses -lcurl -mtune=generic -c -fPIC -mXX -march=XX
-LDLIBS = -Wl,--defsym,BUILD_$(DEFSYM)=0 -lm -lpthread -lncurses -lcurl -mtune=generic
+#LDLIBS = -Wl,--defsym,BUILD_$(DEFSYM)=0 -lm -lpthread -mtune=generic -c -fPIC -mXX -march=XX -lncurses -lcurl
+LDLIBS = -Wl,--defsym,BUILD_$(DEFSYM)=0 -lm -lpthread -mtune=generic
 LDOBJ = -c -fPIC
 LDUX64 = -m64 -march=x86-64
 LDUX32 = -m32 -march=i386
@@ -135,14 +135,14 @@ $(SRCDIR)libaspipo-w32.lib : $(SRCDIR)libaspipo-w32.obj
 
 #--------------------- Linux: libaspipo.o
 $(SRCDIR)libaspipo-ux64.o : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
-	#gcc -m64 -march=x86-64 -mtune=generic -Wall -O0 -g -c $(SRCDIR)libaspipo.c -fPIC -o $(SRCDIR)libaspipo-ux64.o
+	-@#gcc -m64 -march=x86-64 -mtune=generic -Wall -O0 -g -c $(SRCDIR)libaspipo.c -fPIC -o $(SRCDIR)libaspipo-ux64.o
 	-$(CC) $(LDUX64) $(LDLIBS) $(LDOBJ) $(CFLAGS) $(CPPFLAGS) $(SRCDIR)libaspipo.c -o $(SRCDIR)libaspipo-ux64.o 2>&1 | tee errors-ux64.err
 ifeq "$(CCCOLOR)" "always"
 	@sed -i -r "s/\x1B\[(([0-9]+)(;[0-9]+)*)?[m,K,H,f,J]//g" errors-ux64.err
 endif
 	-@[ ! -s errors-ux64.err ] && echo "libaspipo version" $(VERSION) > $(VERDIR)VERSION
 $(SRCDIR)libaspipo-ux32.o : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
-	#gcc -m32 -march=i386 -mtune=generic -Wall -O0 -g -c $(SRCDIR)libaspipo.c -fPIC -o $(SRCDIR)libaspipo-ux32.o
+	-@#gcc -m32 -march=i386 -mtune=generic -Wall -O0 -g -c $(SRCDIR)libaspipo.c -fPIC -o $(SRCDIR)libaspipo-ux32.o
 	-$(CC) $(LDUX32) $(LDLIBS) $(LDOBJ) $(CFLAGS) $(CPPFLAGS) $(SRCDIR)libaspipo.c -o $(SRCDIR)libaspipo-ux32.o 2>&1 | tee errors-ux32.err
 ifeq "$(CCCOLOR)" "always"
 	@sed -i -r "s/\x1B\[(([0-9]+)(;[0-9]+)*)?[m,K,H,f,J]//g" errors-ux32.err
@@ -151,14 +151,14 @@ endif
 
 #--------------------- Windows: libaspipo.obj
 $(SRCDIR)libaspipo-w64.obj : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
-	#x86_64-w64-mingw32-gcc -Wall -O0 -g -c $(SRCDIR)libaspipo.c -o $(SRCDIR)libaspipo-w64.obj
+	-@#x86_64-w64-mingw32-gcc -Wall -O0 -g -c $(SRCDIR)libaspipo.c -o $(SRCDIR)libaspipo-w64.obj
 	-$(CCW64) $(LDOBJ) $(CFLAGS) $(CPPFLAGS) $(SRCDIR)libaspipo.c -o $(SRCDIR)libaspipo-w64.obj 2>&1 | tee errors-w64.err
 ifeq "$(CCCOLOR)" "always"
 	@sed -i -r "s/\x1B\[(([0-9]+)(;[0-9]+)*)?[m,K,H,f,J]//g" errors-w64.err
 endif
 	-@[ ! -s errors-w64.err ] && echo "libaspipo version" $(VERSION) > $(VERDIR)VERSION
 $(SRCDIR)libaspipo-w32.obj : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
-	#i586-mingw32msvc-gcc -Wall -O0 -g -c $(SRCDIR)libaspipo.c -o $(SRCDIR)libaspipo-w32.obj
+	-@#i586-mingw32msvc-gcc -Wall -O0 -g -c $(SRCDIR)libaspipo.c -o $(SRCDIR)libaspipo-w32.obj
 	-$(CCW32) $(LDOBJ) $(CFLAGS) $(CPPFLAGS) $(SRCDIR)libaspipo.c -o $(SRCDIR)libaspipo-w32.obj 2>&1 | tee errors-w32.err
 ifeq "$(CCCOLOR)" "always"
 	@sed -i -r "s/\x1B\[(([0-9]+)(;[0-9]+)*)?[m,K,H,f,J]//g" errors-w32.err
@@ -166,21 +166,21 @@ endif
 	-@[ ! -s errors-w32.err ] && echo "libaspipo version" $(VERSION) > $(VERDIR)VERSION
 
 #--------------------- Linux: agente.x
-$(o)-ux64.x : $(o).c $(SRCDIR)libaspipo.h $(SRCDIR)libaspipo-ux64.a
-	#gcc -m64 -march=x86-64 -mtune=generic -Wall -O0 -g $(o).c $(SRCDIR)libaspipo-ux64.a -o $(o)-ux64.x 2>&1 | tee errors-ux64.err
+$(o)-ux64.x : $(TPTDIR)$(o).c $(SRCDIR)libaspipo.h $(SRCDIR)libaspipo-ux64.a
+	-@#gcc -m64 -march=x86-64 -mtune=generic -Wall -O0 -g $(o).c $(SRCDIR)libaspipo-ux64.a -o $(o)-ux64.x 2>&1 | tee errors-ux64.err
 	-$(CC) $(LDUX64) $(LDLIBS) $(CFLAGS) $(CPPFLAGS) $(TPTDIR)$(o).c $(SRCDIR)libaspipo-ux64.a -o $(SRCDIR)$(o)-ux64.x 2>&1 | tee errors-ux64.err
-$(o)-ux32.x : $(o).c $(SRCDIR)libaspipo.h $(SRCDIR)libaspipo-ux32.a
-	#gcc -m32 -march=i586 -mtune=generic -Wall -O0 -g $(o).c $(SRCDIR)libaspipo-ux32.a -o $(o)-ux32.x 2>&1 | tee errors-ux32.err
-	-$(CC) $(LDUX32) $(LDLIBS) $(CFLAGS) $(CPPFLAGS) $(TPTDIR)$(o).c $(SRCDIR).libaspipo-ux32.a -o $(SRCDIR)$(o)-ux32.x 2>&1 | tee errors-ux32.err
+$(o)-ux32.x : $(TPTDIR)$(o).c $(SRCDIR)libaspipo.h $(SRCDIR)libaspipo-ux32.a
+	-@#gcc -m32 -march=i586 -mtune=generic -Wall -O0 -g $(o).c $(SRCDIR)libaspipo-ux32.a -o $(o)-ux32.x 2>&1 | tee errors-ux32.err
+	-$(CC) $(LDUX32) $(LDLIBS) $(CFLAGS) $(CPPFLAGS) $(TPTDIR)$(o).c $(SRCDIR)libaspipo-ux32.a -o $(SRCDIR)$(o)-ux32.x 2>&1 | tee errors-ux32.err
 
 #--------------------- Windows: agente.exe
-$(o)-w64.exe : $(o).c $(SRCDIR)libaspipo.h $(SRCDIR)libaspipo-w64.lib
-	#x86_64-w64-mingw32-gcc -Wall -O0 -g $(o).c $(SRCDIR)libaspipo-w64.lib -o $(o)-w64.exe 2>&1 | tee errors-w64.err
+$(o)-w64.exe : $(TPTDIR)$(o).c $(SRCDIR)libaspipo.h $(SRCDIR)libaspipo-w64.lib
+	-@#x86_64-w64-mingw32-gcc -Wall -O0 -g $(o).c $(SRCDIR)libaspipo-w64.lib -o $(o)-w64.exe 2>&1 | tee errors-w64.err
 	-$(CCW64) $(LDLIBS) $(CFLAGS) $(CPPFLAGS) $(TPTDIR)$(o).c $(SRCDIR)libaspipo-w64.lib -o $(SRCDIR)$(o)-w64.exe 2>&1 | tee errors-w64.err
 
-$(o)-w32.exe : $(o).c $(SRCDIR)libaspipo.h $(SRCDIR)libaspipo-w32.lib
-	#i586-mingw32msvc-gcc -Wall -O0 -g $(o).c $(SRCDIR)libaspipo-w32.lib -o $(o)-w32.exe 2>&1 | tee errors-w32.err
-	-$(CCW32) $(LDLIBS) $(CFLAGS) $(CPPFLAGS) $(TPTDIR)$(o).c $(SRCDIR)libaspipo-w64.lib -o $(SRCDIR)$(o)-w64.exe 2>&1 | tee errors-w64.err
+$(o)-w32.exe : $(TPTDIR)$(o).c $(SRCDIR)libaspipo.h $(SRCDIR)libaspipo-w32.lib
+	-@#i586-mingw32msvc-gcc -Wall -O0 -g $(o).c $(SRCDIR)libaspipo-w32.lib -o $(o)-w32.exe 2>&1 | tee errors-w32.err
+	-$(CCW32) $(LDLIBS) $(CFLAGS) $(CPPFLAGS) $(TPTDIR)$(o).c $(SRCDIR)libaspipo-w32.lib -o $(SRCDIR)$(o)-w32.exe 2>&1 | tee errors-w32.err
 
 #--------------------- Clean and copy
 clean : .clean-ux .clean-w
@@ -191,20 +191,23 @@ clean : .clean-ux .clean-w
 	rm -f $(SRCDIR)libaspipo-*.a
 	rm -f $(BINDIR)libaspipo-*.o
 	rm -f $(BINDIR)libaspipo-*.a
-	rm -f $(SRCDIR)$(o).x
+	rm -f $(SRCDIR)$(o)-ux64.x
+	rm -f $(SRCDIR)$(o)-ux32.x
 
 .clean-w :
 	rm -f $(SRCDIR)libaspipo-*.obj
 	rm -f $(SRCDIR)libaspipo-*.lib
 	rm -f $(BINDIR)libaspipo-*.obj
 	rm -f $(BINDIR)libaspipo-*.lib
-	rm -f $(SRCDIR)$(o).exe
+	rm -f $(SRCDIR)$(o)-w64.exe
+	rm -f $(SRCDIR)$(o)-w32.exe
 
 copy :
 	cp $(SRCDIR)libaspipo*.a $(BINDIR)
 	cp $(SRCDIR)libaspipo*.lib $(BINDIR)
 	cp $(SRCDIR)libaspipo*.o $(BINDIR)
 	cp $(SRCDIR)libaspipo*.obj $(BINDIR)
+	cp $(SRCDIR)libaspipo.h $(TPTDIR)
 
 #--------------------- tag file
 tags :
