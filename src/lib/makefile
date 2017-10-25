@@ -143,14 +143,14 @@ $(SRCDIR)libaspipo-ux64.o : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
 ifeq "$(CCCOLOR)" "always"
 	@sed -i -r "s/\x1B\[(([0-9]+)(;[0-9]+)*)?[m,K,H,f,J]//g" errors-ux64.err
 endif
-	-@[ ! -s errors-ux64.err ] && echo $@ version $(VERSION) > VERSION
+	-@[ ! -s errors-ux64.err ] && echo "libaspipo version" $(VERSION) > $(VERDIR)VERSION
 $(SRCDIR)libaspipo-ux32.o : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
 	#gcc -m32 -march=i386 -mtune=generic -Wall -O0 -g -c $(SRCDIR)libaspipo.c -fPIC -o $(SRCDIR)libaspipo-ux32.o
 	-$(CC) $(LDUX32) $(LDLIBS) $(LDOBJ) $(CFLAGS) $(CPPFLAGS) $(SRCDIR)libaspipo.c -o $(SRCDIR)libaspipo-ux32.o 2>&1 | tee errors-ux32.err
 ifeq "$(CCCOLOR)" "always"
 	@sed -i -r "s/\x1B\[(([0-9]+)(;[0-9]+)*)?[m,K,H,f,J]//g" errors-ux32.err
 endif
-	-@[ ! -s errors-ux32.err ] && echo $@ version $(VERSION) > VERSION
+	-@[ ! -s errors-ux32.err ] && echo "libaspipo version" $(VERSION) > $(VERDIR)VERSION
 
 #--------------------- Windows: libaspipo.obj
 $(SRCDIR)libaspipo-w64.obj : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
@@ -159,14 +159,14 @@ $(SRCDIR)libaspipo-w64.obj : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
 ifeq "$(CCCOLOR)" "always"
 	@sed -i -r "s/\x1B\[(([0-9]+)(;[0-9]+)*)?[m,K,H,f,J]//g" errors-w64.err
 endif
-	-@[ ! -s errors-w64.err ] && echo $@ version $(VERSION) > VERSION	
+	-@[ ! -s errors-w64.err ] && echo "libaspipo version" $(VERSION) > $(VERDIR)VERSION
 $(SRCDIR)libaspipo-w32.obj : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
 	#i586-mingw32msvc-gcc -Wall -O0 -g -c $(SRCDIR)libaspipo.c -o $(SRCDIR)libaspipo-w32.obj
 	-$(CCW32) $(LDOBJ) $(CFLAGS) $(CPPFLAGS) $(SRCDIR)libaspipo.c -o $(SRCDIR)libaspipo-w32.obj 2>&1 | tee errors-w32.err
 ifeq "$(CCCOLOR)" "always"
 	@sed -i -r "s/\x1B\[(([0-9]+)(;[0-9]+)*)?[m,K,H,f,J]//g" errors-w32.err
 endif
-	-@[ ! -s errors-w32.err ] && echo $@ version $(VERSION) > VERSION
+	-@[ ! -s errors-w32.err ] && echo "libaspipo version" $(VERSION) > $(VERDIR)VERSION
 
 #--------------------- Linux: agente.x
 $(o)-ux64.x : $(o).c $(SRCDIR)libaspipo.h $(SRCDIR)libaspipo-ux64.a
@@ -192,11 +192,15 @@ clean : .clean-ux .clean-w
 .clean-ux : 
 	rm -f $(SRCDIR)libaspipo-*.o
 	rm -f $(SRCDIR)libaspipo-*.a
+	rm -f $(BINDIR)libaspipo-*.o
+	rm -f $(BINDIR)libaspipo-*.a
 	rm -f $(SRCDIR)$(o).x
 
 .clean-w :
 	rm -f $(SRCDIR)libaspipo-*.obj
 	rm -f $(SRCDIR)libaspipo-*.lib
+	rm -f $(BINDIR)libaspipo-*.obj
+	rm -f $(BINDIR)libaspipo-*.lib
 	rm -f $(SRCDIR)$(o).exe
 
 copy :
