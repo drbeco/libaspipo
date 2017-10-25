@@ -78,7 +78,7 @@ void inicializar_apriori(void)
   obs.capasaco=-1;   /*capacidade do saco*/
   obs.terremoto=0;  /*flag de terremoto*/
   for(i=menor_sala; i<maior_sala; i++)
-    obs.sala[QTDSALA]=-1; /*flag de condicao de limpeza da sala*/
+    obs.sala[i]=-1; /*flag de condicao de limpeza da sala*/
   obs.v_andar=0;         /*peso de andar*/
   obs.v_ler=0;           /*peso de ler*/
   obs.v_aspirar=0;       /*peso de aspirar*/
