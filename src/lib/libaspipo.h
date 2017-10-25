@@ -66,8 +66,8 @@ Condicoes:
           numeradas em ordem crescente e sequencial iniciando aleatoriamente proximo de 2 a 90
 */
 
-#define MAXACOES 1000
-#define MAXACOESFINAL 1100
+#define MAXACOES 10000
+#define MAXACOESFINAL 10100
 #define QTDSALA 100
 
 /* OBS0 -> obs.v_andar, obs.v_ler, obs.v_aspirar, obs.v_assoprar, obs.v_passarvez, obs.v_limpar, obs.v_desc, obs.v_bonus, v_tempolimpo*/
@@ -168,8 +168,7 @@ extern desempenho md;
 
 typedef struct
 {
-  float p_sujar, p_terremoto; /*configuracoes*/
-  float p_succao, p_movimento, p_sensorial;
+  float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; /*probabilidades*/
 } probabilidade;
 extern probabilidade pr;
 

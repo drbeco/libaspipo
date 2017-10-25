@@ -47,7 +47,7 @@ Bugs:
 #define LIMPA 0
 #define SUJA 1
 #define DEBUG 1
-#define MAXACOES 1000
+// #define MAXACOES 1000
 
 static int terremoto;
 static int inicializou = 0;
@@ -478,7 +478,7 @@ int inicializar_ambiente(int nivelobs, int niveldet, int qs, int apriori, int fu
   /*
   0-completamente observavel,
   1-sem medida de desempenho e sem mostrar_pontos()
-  2-parcialmente observavel com ler_chamada(),
+  2-parcialmente observavel com ler_chamado(),
   3-apenas indicacao de terremoto
   4-completamente no escuro
   */
