@@ -250,7 +250,7 @@ saida: 0
 */
 int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vdesc, int vbonus, int vtempolimpo, float psujar, float pterremoto, float psuccao, float pmovimento, float psensorial)
 {
-  int i, capamin, capamax;
+  int i, capamin, capamax, pt;
   printf("----------- agente (0): \n");
   printf("inicializar_ambiente()\n");
   printf("----------- ambiente: \n");
@@ -348,7 +348,11 @@ int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassopr
 
   /* sorteia a condicao de cada sala, se limpa ou suja */
   for(i=menor_sala; i<maior_sala; i++)
-    sala[i]=((rand()%25)?1:0); /*nem todas iniciam todas salas sujas */
+  {
+    pt=((float)rand()/(float)RAND_MAX);
+    if(pt < p_sujar)
+      sala[i]=1; /*((rand()%25)?1:0);*/ /*nem todas salas iniciam sujas */
+  }
 
   qtd_limpou=qtd_descarregou=0;
   temnosaco=0; /*para calculo da capacidade do saco*/
@@ -372,6 +376,8 @@ int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassopr
 
   /* conhecimento a priori do mundo */
   inicializar_apriori();
+  /* nivel de observabilidade */
+  atualiza_observavel();
 
   printf("--> Conhecimento a priori nivel (0-Tudo, 5-Nada): %d\n", APRIORI);
   /*conhecimento inicial do mundo: 5-nada, 4-mpos, qtd_sala,  3-menor_sala, maior_sala, 2-sujeiras, 1-capasaco, 0-md, proba, sala desc*/
