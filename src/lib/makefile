@@ -134,9 +134,6 @@ $(SRCDIR)libaspipo-w32.lib : $(SRCDIR)libaspipo-w32.obj
 	i586-mingw32msvc-ar -cvq $(SRCDIR)libaspipo-w32.lib $(SRCDIR)libaspipo-w32.obj
 
 #--------------------- Linux: libaspipo.o
-#%.x : %.c $(OBJ) $(SRC)
-#	-$(CC) $(CFLAGS) $(CPPFLAGS) $(LDLIBS) $^ -o $@ 2>&1 | tee errors.err
-
 $(SRCDIR)libaspipo-ux64.o : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
 	#gcc -m64 -march=x86-64 -mtune=generic -Wall -O0 -g -c $(SRCDIR)libaspipo.c -fPIC -o $(SRCDIR)libaspipo-ux64.o
 	-$(CC) $(LDUX64) $(LDLIBS) $(LDOBJ) $(CFLAGS) $(CPPFLAGS) $(SRCDIR)libaspipo.c -o $(SRCDIR)libaspipo-ux64.o 2>&1 | tee errors-ux64.err
