@@ -205,6 +205,11 @@ copy :
 	cp $(SRCDIR)libaspipo*.o $(BINDIR)
 	cp $(SRCDIR)libaspipo*.obj $(BINDIR)
 
+#--------------------- tag file
+tags :
+	ctags -R
+	ctags -R -x | less -F
+
 #* ------------------------------------------------------------------- *
 #* makefile config for Vim modeline                                    *
 #* vi: set ai noet ts=4 sw=4 tw=0 wm=0 fo=croqlt :                     *
