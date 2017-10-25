@@ -1,0 +1,166 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+APRIORI	libaspipo.c	/^static int NIVELDET, NIVELOBS, APRIORI, FUNCDES, FOLGA;$/;"	v	file:
+APRIORI0	libaspipo.h	137;"	d
+APRIORI1	libaspipo.h	136;"	d
+APRIORI2	libaspipo.h	135;"	d
+APRIORI3	libaspipo.h	134;"	d
+APRIORI4	libaspipo.h	133;"	d
+APRIORI5	libaspipo.h	132;"	d
+APRIORI6	libaspipo.h	131;"	d
+BINDIR	makefile	/^BINDIR := ..\/..\/bin\/$/;"	m
+BUILD	makefile	/^BUILD = $(shell date +"%g%m%d.%H%M%S")$/;"	m
+CC	makefile	/^CC = gcc$/;"	m
+CCCOLOR	makefile	/^CCCOLOR ?= always$/;"	m
+CCSHARED	makefile	/^CCSHARED = -shared$/;"	m
+CCW32	makefile	/^CCW32 = i586-mingw32msvc-gcc$/;"	m
+CCW64	makefile	/^CCW64 = x86_64-w64-mingw32-gcc$/;"	m
+CFLAGS	makefile	/^CFLAGS = -Wall -Wextra -std=gnu99 -fdiagnostics-color=$(CCCOLOR)$/;"	m
+CPPFLAGS	makefile	/^CPPFLAGS = -DVERSION=$(VERSION) -DBUILD="\\"$(BUILD)\\"" -DDEBUG=$(DEBUG) -D$(D) -D_FORTIFY_SOURCE=$(FORTIFY)$/;"	m
+D	makefile	/^D ?= D_$/;"	m
+DEBUG	libaspipo.c	50;"	d	file:
+DEBUG	makefile	/^DEBUG ?= 1$/;"	m
+DEFSYM	makefile	/^DEFSYM = $(subst .,_,$(BUILD))$/;"	m
+DESC0	libaspipo.h	140;"	d
+DESC1	libaspipo.h	142;"	d
+DETCAPACIDADE	libaspipo.h	121;"	d
+DETERMINISTICO	libaspipo.h	114;"	d
+DETMOVIMENTO	libaspipo.h	117;"	d
+DETSENSORES	libaspipo.h	118;"	d
+DETSUCCAO	libaspipo.h	116;"	d
+DETSUJEIRA	libaspipo.h	115;"	d
+DETTERREMOTOBASICO	libaspipo.h	119;"	d
+DETTERREMOTOTOTAL	libaspipo.h	120;"	d
+FOLGA	libaspipo.c	/^static int NIVELDET, NIVELOBS, APRIORI, FUNCDES, FOLGA;$/;"	v	file:
+FOLGA0	libaspipo.h	147;"	d
+FOLGA1	libaspipo.h	145;"	d
+FORTIFY	makefile	/^FORTIFY ?= 1$/;"	m
+FUNCDES	libaspipo.c	/^static int NIVELDET, NIVELOBS, APRIORI, FUNCDES, FOLGA;$/;"	v	file:
+LDLIBS	makefile	/^LDLIBS = -Wl,--defsym,BUILD_$(DEFSYM)=0 -lm -lpthread -lncurses -lcurl -mtune=generic$/;"	m
+LDOBJ	makefile	/^LDOBJ = -c -fPIC$/;"	m
+LDUX32	makefile	/^LDUX32 = -m32 -march=i386$/;"	m
+LDUX64	makefile	/^LDUX64 = -m64 -march=x86-64$/;"	m
+LIMPA	libaspipo.c	48;"	d	file:
+MAJOR	makefile	/^MAJOR ?= 1$/;"	m
+MAXACOES	libaspipo.h	69;"	d
+MAXACOESFINAL	libaspipo.h	70;"	d
+MINOR	makefile	/^MINOR ?= 2$/;"	m
+NIVELDET	libaspipo.c	/^static int NIVELDET, NIVELOBS, APRIORI, FUNCDES, FOLGA;$/;"	v	file:
+NIVELOBS	libaspipo.c	/^static int NIVELDET, NIVELOBS, APRIORI, FUNCDES, FOLGA;$/;"	v	file:
+OBJ	makefile	/^OBJ ?=$/;"	m
+OBS0	libaspipo.h	94;"	d
+OBS1	libaspipo.h	95;"	d
+OBS2	libaspipo.h	96;"	d
+OBS3	libaspipo.h	97;"	d
+OBS4	libaspipo.h	98;"	d
+QTDSALA	libaspipo.h	71;"	d
+SHELL	makefile	/^SHELL=\/bin\/bash -o pipefail$/;"	m
+SRC	makefile	/^SRC ?=$/;"	m
+SRCDIR	makefile	/^SRCDIR := .\/$/;"	m
+SUJA	libaspipo.c	49;"	d	file:
+TPTDIR	makefile	/^TPTDIR := ..\/templates\/$/;"	m
+VERDIR	makefile	/^VERDIR := ..\/..\/$/;"	m
+VERSION	makefile	/^VERSION = "\\"$(MAJOR).$(MINOR).$(BUILD)\\""$/;"	m
+acao_andar	libaspipo.c	/^static int acoes=0, acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez, qtd_bonus, qtd_limpou, qtd_descarregou, qtd_tempolimpo; \/*contadores*\/$/;"	v	file:
+acao_aspirar	libaspipo.c	/^static int acoes=0, acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez, qtd_bonus, qtd_limpou, qtd_descarregou, qtd_tempolimpo; \/*contadores*\/$/;"	v	file:
+acao_assoprar	libaspipo.c	/^static int acoes=0, acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez, qtd_bonus, qtd_limpou, qtd_descarregou, qtd_tempolimpo; \/*contadores*\/$/;"	v	file:
+acao_ler	libaspipo.c	/^static int acoes=0, acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez, qtd_bonus, qtd_limpou, qtd_descarregou, qtd_tempolimpo; \/*contadores*\/$/;"	v	file:
+acao_passarvez	libaspipo.c	/^static int acoes=0, acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez, qtd_bonus, qtd_limpou, qtd_descarregou, qtd_tempolimpo; \/*contadores*\/$/;"	v	file:
+acoes	libaspipo.c	/^static int acoes=0, acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez, qtd_bonus, qtd_limpou, qtd_descarregou, qtd_tempolimpo; \/*contadores*\/$/;"	v	file:
+ambiente	libaspipo.c	/^static void ambiente(int tacao)$/;"	f	file:
+aspirar	libaspipo.c	/^int aspirar(void)$/;"	f
+assoprar	libaspipo.c	/^int assoprar(void)$/;"	f
+atualiza_observavel	libaspipo.c	/^void atualiza_observavel(void)$/;"	f
+capasaco	libaspipo.c	/^static int qtd_sala, menor_sala, maior_sala, descarga_sala, capasaco; \/*configuracoes*\/$/;"	v	file:
+capasaco	libaspipo.h	/^  int capasaco; \/*capacidade maxima do saco *\/$/;"	m	struct:__anon1
+descarga_sala	libaspipo.c	/^static int qtd_sala, menor_sala, maior_sala, descarga_sala, capasaco; \/*configuracoes*\/$/;"	v	file:
+descarga_sala	libaspipo.h	/^  int qtd_sala, menor_sala, maior_sala, descarga_sala; \/*configuracoes*\/$/;"	m	struct:__anon1
+desempenho	libaspipo.h	/^} desempenho;$/;"	t	typeref:struct:__anon2
+direita	libaspipo.c	/^int direita(void)$/;"	f
+esquerda	libaspipo.c	/^int esquerda(void)$/;"	f
+finalizar_ambiente	libaspipo.c	/^int finalizar_ambiente(void)$/;"	f
+flag_bonus	libaspipo.c	/^static int flag_bonus;$/;"	v	file:
+gastos	libaspipo.c	/^void gastos(int *qandar, int *qler, int *qaspirar, int *qassoprar, int *qpassarvez, int *qlimpar, int *qdescarregar, int *qbonus, int *qtempolimpo)$/;"	f
+imprimir_ambiente	libaspipo.c	/^void imprimir_ambiente(void)$/;"	f
+inicializar_amb	libaspipo.c	/^int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vdesc, int vbonus, int vtempolimpo, float psujar, float pterremoto, float psuccao, float pmovimento, float psensorial)$/;"	f
+inicializar_ambiente	libaspipo.c	/^int inicializar_ambiente(int nivelobs, int niveldet, int qs, int apriori, int funcdes, int ffolga, desempenho *mdext, probabilidade *prext)$/;"	f
+inicializar_apriori	libaspipo.c	/^void inicializar_apriori(void)$/;"	f
+inicializou	libaspipo.c	/^static int inicializou = 0;$/;"	v	file:
+ler_chamado	libaspipo.c	/^int ler_chamado(void)$/;"	f
+ler_descarga	libaspipo.c	/^int ler_descarga(void)$/;"	f
+ler_posicao	libaspipo.c	/^int ler_posicao(void)$/;"	f
+ler_sujeira	libaspipo.c	/^int ler_sujeira(void)$/;"	f
+maior_sala	libaspipo.c	/^static int qtd_sala, menor_sala, maior_sala, descarga_sala, capasaco; \/*configuracoes*\/$/;"	v	file:
+maior_sala	libaspipo.h	/^  int qtd_sala, menor_sala, maior_sala, descarga_sala; \/*configuracoes*\/$/;"	m	struct:__anon1
+md	libaspipo.c	/^desempenho md;$/;"	v
+menor_sala	libaspipo.c	/^static int qtd_sala, menor_sala, maior_sala, descarga_sala, capasaco; \/*configuracoes*\/$/;"	v	file:
+menor_sala	libaspipo.h	/^  int qtd_sala, menor_sala, maior_sala, descarga_sala; \/*configuracoes*\/$/;"	m	struct:__anon1
+mostrar_pontos	libaspipo.c	/^int mostrar_pontos(void)$/;"	f
+mpos	libaspipo.h	/^  int mpos; \/\/static int pos_aspipo;$/;"	m	struct:__anon1
+naoiniciou	libaspipo.c	/^int naoiniciou(void)$/;"	f
+o	makefile	/^o ?= aspipo$/;"	m
+obs	libaspipo.c	/^observavel obs;$/;"	v
+observavel	libaspipo.h	/^} observavel;$/;"	t	typeref:struct:__anon1
+p_movimento	libaspipo.c	/^static float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*configuracoes*\/$/;"	v	file:
+p_movimento	libaspipo.h	/^  float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*configuracoes*\/$/;"	m	struct:__anon1
+p_movimento	libaspipo.h	/^  float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*probabilidades*\/$/;"	m	struct:__anon3
+p_sensorial	libaspipo.c	/^static float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*configuracoes*\/$/;"	v	file:
+p_sensorial	libaspipo.h	/^  float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*configuracoes*\/$/;"	m	struct:__anon1
+p_sensorial	libaspipo.h	/^  float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*probabilidades*\/$/;"	m	struct:__anon3
+p_succao	libaspipo.c	/^static float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*configuracoes*\/$/;"	v	file:
+p_succao	libaspipo.h	/^  float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*configuracoes*\/$/;"	m	struct:__anon1
+p_succao	libaspipo.h	/^  float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*probabilidades*\/$/;"	m	struct:__anon3
+p_sujar	libaspipo.c	/^static float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*configuracoes*\/$/;"	v	file:
+p_sujar	libaspipo.h	/^  float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*configuracoes*\/$/;"	m	struct:__anon1
+p_sujar	libaspipo.h	/^  float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*probabilidades*\/$/;"	m	struct:__anon3
+p_terremoto	libaspipo.c	/^static float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*configuracoes*\/$/;"	v	file:
+p_terremoto	libaspipo.h	/^  float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*configuracoes*\/$/;"	m	struct:__anon1
+p_terremoto	libaspipo.h	/^  float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; \/*probabilidades*\/$/;"	m	struct:__anon3
+passar_vez	libaspipo.c	/^int passar_vez(void)$/;"	f
+pontos	libaspipo.c	/^int pontos(void)$/;"	f
+pos_aspipo	libaspipo.c	/^static int pos_aspipo;$/;"	v	file:
+pr	libaspipo.c	/^probabilidade pr;$/;"	v
+probabilidade	libaspipo.h	/^} probabilidade;$/;"	t	typeref:struct:__anon3
+qtd_acoes	libaspipo.c	/^int qtd_acoes(void)$/;"	f
+qtd_bonus	libaspipo.c	/^static int acoes=0, acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez, qtd_bonus, qtd_limpou, qtd_descarregou, qtd_tempolimpo; \/*contadores*\/$/;"	v	file:
+qtd_descarregou	libaspipo.c	/^static int acoes=0, acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez, qtd_bonus, qtd_limpou, qtd_descarregou, qtd_tempolimpo; \/*contadores*\/$/;"	v	file:
+qtd_limpou	libaspipo.c	/^static int acoes=0, acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez, qtd_bonus, qtd_limpou, qtd_descarregou, qtd_tempolimpo; \/*contadores*\/$/;"	v	file:
+qtd_sala	libaspipo.c	/^static int qtd_sala, menor_sala, maior_sala, descarga_sala, capasaco; \/*configuracoes*\/$/;"	v	file:
+qtd_sala	libaspipo.h	/^  int qtd_sala, menor_sala, maior_sala, descarga_sala; \/*configuracoes*\/$/;"	m	struct:__anon1
+qtd_tempolimpo	libaspipo.c	/^static int acoes=0, acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez, qtd_bonus, qtd_limpou, qtd_descarregou, qtd_tempolimpo; \/*contadores*\/$/;"	v	file:
+sala	libaspipo.c	/^static int sala[QTDSALA]; \/* sala[A]=sala[B]=suja *\/$/;"	v	file:
+sala	libaspipo.h	/^  int sala[QTDSALA]; \/* sala[A]=sala[B]=suja *\/$/;"	m	struct:__anon1
+temnosaco	libaspipo.c	/^static int temnosaco; \/*zera quando assopra*\/$/;"	v	file:
+terremoto	libaspipo.c	/^static int terremoto;$/;"	v	file:
+terremoto	libaspipo.h	/^  volatile int terremoto; \/*volatil, dura uma acao, (1=teve terremoto, 0=nao teve terremoto) na acao passada *\/$/;"	m	struct:__anon1
+v_andar	libaspipo.c	/^static int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	v	file:
+v_andar	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon1
+v_andar	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon2
+v_aspirar	libaspipo.c	/^static int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	v	file:
+v_aspirar	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon1
+v_aspirar	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon2
+v_assoprar	libaspipo.c	/^static int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	v	file:
+v_assoprar	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon1
+v_assoprar	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon2
+v_bonus	libaspipo.c	/^static int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	v	file:
+v_bonus	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon1
+v_bonus	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon2
+v_desc	libaspipo.c	/^static int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	v	file:
+v_desc	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon1
+v_desc	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon2
+v_ler	libaspipo.c	/^static int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	v	file:
+v_ler	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon1
+v_ler	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon2
+v_limpar	libaspipo.c	/^static int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	v	file:
+v_limpar	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon1
+v_limpar	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon2
+v_passarvez	libaspipo.c	/^static int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	v	file:
+v_passarvez	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon1
+v_passarvez	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon2
+v_tempolimpo	libaspipo.c	/^static int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	v	file:
+v_tempolimpo	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon1
+v_tempolimpo	libaspipo.h	/^  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; \/*pesos*\/$/;"	m	struct:__anon2
