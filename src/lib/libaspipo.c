@@ -47,11 +47,11 @@ Acoes independentes do Ambiente:
 
 volatile int terremoto;
 static int inicializou = 0;
-static int limpou, limpouqtdsala;
+static int limpou, limpouqtdsala, descarregou;
 static int acao_andar, acao_ler, acao_aspirar, acao_assoprar, acao_passarvez;
 static int pos_aspipo;
 static int sala[QTDSALA]; /* sala[A]=sala[B]=suja */
-static int qtd_sala, v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_bonus;
+static int qtd_sala, v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus;
 static int menor_sala, maior_sala, descarga_sala;
 static float p_sujar, p_terremoto;
 static int acoes;
@@ -59,12 +59,12 @@ static int qtdsalalimpa, bonustudolimpo;
 static int bonus;
 
 /*
-funcao int inicializa_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vlimpar, float psujar, float pterremoto)
+funcao int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vdesc, int vbonus, float psujar, float pterremoto)
 Tipo: interna (a decidir. No momento, interna)
-entrada: sala, andar, sentir, aspirar, assoprar, passarvez, limpar, bonus, sujar, terremoto
+entrada: sala, andar, sentir, aspirar, assoprar, passarvez, limpar, descarrecar bonus, sujar, terremoto
 saida: 0 
 */
-int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vbonus, float psujar, float pterremoto)
+int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vdesc, int vbonus, float psujar, float pterremoto)
 {
   int i;
   printf("-------------------------------------------------------\n");
@@ -92,7 +92,7 @@ int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassopr
     maior_sala=menor_sala+qtd_sala; /*maior_sala exclusive*/
     descarga_sala=menor_sala+rand()%qtd_sala;
   }
-  if(DEBUG>=1) printf("Menor sala = %d\nMaior sala = %d\nSala de Descarga = %d\nCapacidade do saco = %d\n",menor_sala, maior_sala, descarga_sala, qtd_sala);
+  if(DEBUG>=1) printf("Menor sala = %d\nMaior sala = %d\nSala de Descarga = %d\nCapacidade do saco = %d\n",menor_sala, maior_sala-1, descarga_sala, qtd_sala);
   if(psujar<0.000003||psujar>0.9)
   {
     //p_sujar=((float)rand()/(float)RAND_MAX);
@@ -112,19 +112,21 @@ int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassopr
   for(i=menor_sala; i<maior_sala; i++)
     sala[i]=1; /*iniciam todas salas sujas */
 
-  limpou=0;
-  limpouqtdsala=0;
+  limpou=descarregou=0;
+  limpouqtdsala=0; /*para calculo da capacidade do saco*/
   acao_andar=acao_ler=acao_aspirar=acao_assoprar=acao_passarvez=0;
   if(qtd_sala==2)
     pos_aspipo=0;
   else
     pos_aspipo=menor_sala+rand()%qtd_sala;
+  if(DEBUG>=1) printf("Posicao Inicial do ASPIPO: %d\n",pos_aspipo);
   v_andar=vandar;
   v_ler=vler;
   v_aspirar=vaspirar;
   v_assoprar=vassoprar;
   v_passarvez=vpassarvez;
   v_limpar=vlimpar;
+  v_desc=vdesc;
   v_bonus=vbonus;
   p_sujar=psujar;
   p_terremoto=pterremoto;
@@ -148,10 +150,10 @@ int inicializar_ambiente(int qs)
     qtd_sala=rand()%8+3; /*de 3 a 10 salas */
   else
     qtd_sala=qs;
-  /* sala, andar, sentir, aspirar, assoprar, passarvez, limpar, bonus, sujar, terremoto */
+  /* sala, andar, sentir, aspirar, assoprar, passarvez, limpar, descarregar, bonus, sujar, terremoto */
   //  inicializar_amb(qtd_sala, -2, -1, -40, -95, 0, 100, 1000, 0.05, 0.01);
  //   inicializar_amb(3, -10, -10, -10, 1000, 1000, -10, -10, 0.05, 0.01);
-  inicializar_amb(qtd_sala, -2, -1, -40, -95, 0, 100, 1000, 0.05, 0.01);
+  inicializar_amb(qtd_sala, -2, -1, -40, -95, 0, 100, 100, 1000, 0.05, 0.01);
   return 0;
 }
 
@@ -257,7 +259,7 @@ nao gasta acoes, nem chama ambiente()
 void mostrar_pontos(void)
 {
   int ez;
-  ez=acao_andar*v_andar + acao_ler*v_ler + acao_aspirar*v_aspirar + acao_assoprar*v_assoprar + acao_passarvez*v_passarvez + limpou*v_limpar + bonustudolimpo*v_bonus;
+  ez=acao_andar*v_andar + acao_ler*v_ler + acao_aspirar*v_aspirar + acao_assoprar*v_assoprar + acao_passarvez*v_passarvez + limpou*v_limpar + descarregou*v_desc + bonustudolimpo*v_bonus;
 
   if(DEBUG>=1) printf("Seu agente esta com %d pontos\n", ez);
 }
@@ -376,7 +378,7 @@ int ler_descarga(void)
   if(maior_sala==2) /*funcao desabilitada para o caso trivial de 2 salas*/
   {
     if(DEBUG>=1) printf("Funcao ler_descarga() desabilitada para ambiente de 2 salas.\n");
-    return -1;
+    return 0;
   }
   if(pos_aspipo==descarga_sala)
     r=1;
@@ -513,7 +515,7 @@ int assoprar(void)
     else
     {
       limpouqtdsala=0; /* descarrega o saco do aspipo */
-      limpou++; /* descarga ganha mesma pontuacao que limpeza */
+      descarregou++; /* para pontuacao das descargas corretas */
       if(DEBUG>=1) printf("Esvaziou o saco\n");
     }
   }
@@ -541,7 +543,7 @@ int ler_pontos(void)
   int r;
   printf("ler_pontos()\n");
   printf("----------- ambiente: \n");
-  r=acao_andar*v_andar + acao_ler*v_ler + acao_aspirar*v_aspirar + acao_assoprar*v_assoprar + acao_passarvez*v_passarvez + limpou*v_limpar + bonustudolimpo*v_bonus;
+  r=acao_andar*v_andar + acao_ler*v_ler + acao_aspirar*v_aspirar + acao_assoprar*v_assoprar + acao_passarvez*v_passarvez + limpou*v_limpar + descarregou*v_desc + bonustudolimpo*v_bonus;
   if(inicializou==1)
   {
     printf("Favor chamar a funcao finalizar_ambiente()\n");
@@ -549,13 +551,14 @@ int ler_pontos(void)
   }
   if(DEBUG>=1)
   {
-    printf("\nacao_andar      =%4d * %6d\n", acao_andar, v_andar);
-    printf("acao_ler        =%4d * %6d\n", acao_ler, v_ler);
-    printf("acao_aspirar    =%4d * %6d\n", acao_aspirar, v_aspirar);
-    printf("acao_assoprar   =%4d * %6d\n", acao_assoprar, v_assoprar);
-    printf("acao_passar_vez =%4d * %6d\n", acao_passarvez, v_passarvez);
-    printf("Limpezas        =%4d * %6d\n", limpou, v_limpar);
-    printf("Bonus           =%4d * %6d\n\n", bonustudolimpo, v_bonus);
+    printf("\nAndadas        =%4d * %6d\n", acao_andar, v_andar);
+    printf("Leituras         =%4d * %6d\n", acao_ler, v_ler);
+    printf("Aspiradas        =%4d * %6d\n", acao_aspirar, v_aspirar);
+    printf("Assopradas       =%4d * %6d\n", acao_assoprar, v_assoprar);
+    printf("Passadas de vez  =%4d * %6d\n", acao_passarvez, v_passarvez);
+    printf("Limpezas         =%4d * %6d\n", limpou, v_limpar);
+    printf("Descargas        =%4d * %6d\n", descarregou, v_desc);
+    printf("Bonus Tudo Limpo =%4d * %6d\n\n", bonustudolimpo, v_bonus);
     printf("Seu agente fez %d pontos\n\n", r);
   }
   return r;
@@ -600,7 +603,7 @@ Retorna todas as acoes do agente, com a finalidade de ser usada com outros
 pesos para calculo da medida de desempenho
 */
 
-void gastos(int *qtd_andar, int *qtd_ler, int *qtd_aspirar, int *qtd_assoprar, int *qtd_passarvez, int *qtd_limpar, int *qtd_bonus)
+void gastos(int *qtd_andar, int *qtd_ler, int *qtd_aspirar, int *qtd_assoprar, int *qtd_passarvez, int *qtd_limpar, int *qtd_descarregar, int *qtd_bonus)
 {
   *qtd_andar=acao_andar;
   *qtd_ler=acao_ler;
@@ -608,5 +611,6 @@ void gastos(int *qtd_andar, int *qtd_ler, int *qtd_aspirar, int *qtd_assoprar, i
   *qtd_assoprar=acao_assoprar;
   *qtd_passarvez=acao_passarvez;
   *qtd_limpar=limpou;
+  *qtd_descarregar=descarregou;
   *qtd_bonus=bonustudolimpo;
 }

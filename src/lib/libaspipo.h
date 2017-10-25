@@ -87,9 +87,9 @@ extern int ler_pontos(void);
 extern int qtd_acoes(void);
 
 extern int inicializar_ambiente(int);
-extern int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vbonus, float psujar, float pterremoto);
-void mostrar_pontos(void);
-extern void gastos(int *qtd_andar, int *qtd_ler, int *qtd_aspirar, int *qtd_assoprar, int *qtd_passarvez, int *qtd_limpar, int *qtd_bonus);
+extern int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vdesc, int vbonus, float psujar, float pterremoto);
+extern void mostrar_pontos(void);
+extern void gastos(int *qtd_andar, int *qtd_ler, int *qtd_aspirar, int *qtd_assoprar, int *qtd_passarvez, int *qtd_limpar, int *qtd_descarregar, int *qtd_bonus);
 
 
 /*
@@ -98,7 +98,7 @@ Tipo: interna (a decidir. No momento, interna)
 entrada: sala, andar, sentir, aspirar, assoprar, limpar, sujar, terremoto
 saida: 0
 */
-int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vbonus, float psujar, float pterremoto);
+int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vdesc, int vbonus, float psujar, float pterremoto);
 
 /*
 funcao int inicializa_ambiente(void)
@@ -157,7 +157,8 @@ funcao int ler_descarga(void)
 Tipo: externa
 entrada: nada
 saida: 1 se a sala eh de descarga, 0 se nao eh, e -1 se erro
-indica verdadeiro ou falso para a sala atual ser de descarga
+indica verdadeiro ou falso para a sala atual ser de descarga.
+Não é utilizada em ambientes com 2 salas, caso que retorna 0
 */
 int ler_descarga(void);
 
@@ -229,7 +230,7 @@ Tipo: externa
 Retorna todas as acoes do agente, com a finalidade de ser usada com outros
 pesos para calculo da medida de desempenho
 */
-void gastos(int *qtd_andar, int *qtd_ler, int *qtd_aspirar, int *qtd_assoprar, int *qtd_passarvez, int *qtd_limpar, int *qtd_bonus);
+void gastos(int *qtd_andar, int *qtd_ler, int *qtd_aspirar, int *qtd_assoprar, int *qtd_passarvez, int *qtd_limpar, int *qtd_descarregar, int *qtd_bonus);
 
 
 //--------------------------------
