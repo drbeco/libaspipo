@@ -32,6 +32,8 @@
 *.dSYM/
 *.orig
 *.log
+*.err
+*.swp
 
 # Translations
 *.mo
