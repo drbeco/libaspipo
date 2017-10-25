@@ -34,7 +34,7 @@
 # Gerar biblioteca
 #------------------------
 # no Linux, para Linux
-# gcc -Wall -O0 -g -c libaspipo.c -o libaspipo-ux64.o
+# gcc -Wall -O0 -g -c libaspipo.c -o libaspipo-ux64.o -fPIC
 #
 #------------------------
 # no Linux, para Windows
@@ -85,9 +85,9 @@ libaspipo-w32.lib : libaspipo-w32.obj
 
 #--------------------- Linux: libaspipo.o
 libaspipo-ux64.o : libaspipo.c libaspipo.h
-	gcc -m64 -march=x86-64 -mtune=generic -Wall -O0 -g -c libaspipo.c -o libaspipo-ux64.o
+	gcc -m64 -march=x86-64 -mtune=generic -Wall -O0 -g -c libaspipo.c -fPIC -o libaspipo-ux64.o
 libaspipo-ux32.o : libaspipo.c libaspipo.h
-	gcc -m32 -march=i386 -mtune=generic -Wall -O0 -g -c libaspipo.c -o libaspipo-ux32.o
+	gcc -m32 -march=i386 -mtune=generic -Wall -O0 -g -c libaspipo.c -fPIC -o libaspipo-ux32.o
 
 #--------------------- Windows: libaspipo.obj
 libaspipo-w64.obj : libaspipo.c libaspipo.h
