@@ -1,6 +1,5 @@
-/* ************************************************************************ *
-*    PROGRAM_NAME, VERSION                                                 *
-*    BRIEF_DESCRIPTION                                                     *
+/* *********************************************************************** *
+*    makefile for libaspipo v1.02                                          *
 *                                                                          *
 *    Copyright (C) 2017 by Ruben Carlo Benante                             *
 *                                                                          *
@@ -45,7 +44,7 @@
 #------------------------
 # no Linux, para Linux
 # gcc -Wall -O0 -g -c agente.c libaspipo-ux64.o -o agente.x
-# ou também
+# ou tambem
 # -march=i586 (sem MMX) ou -march=pentium-mmx
 #
 #------------------------
@@ -72,28 +71,28 @@ asp : .asp-ux64 .asp-ux32 .asp-w64 .asp-w32
 .asp-w32 : $(o)-w32.exe
 
 #--------------------- Linux: libaspipo.a
-libaspipo-ux64.a : libaspipo-ux64.o
-	ar -cvq libaspipo-ux64.a libaspipo-ux64.o
-libaspipo-ux32.a : libaspipo-ux32.o
-	ar -cvq libaspipo-ux32.a libaspipo-ux32.o
+libaspipo-ux64.a : bin/libaspipo-ux64.o
+	ar -cvq bin/libaspipo-ux64.a bin/libaspipo-ux64.o
+libaspipo-ux32.a : bin/libaspipo-ux32.o
+	ar -cvq bin/libaspipo-ux32.a bin/libaspipo-ux32.o
 
 #--------------------- Windows: libaspipo.lib
 libaspipo-w64.lib : libaspipo-w64.obj
-	x86_64-w64-mingw32-ar -cvq libaspipo-w64.lib libaspipo-w64.obj
+	x86_64-w64-mingw32-ar -cvq bin/libaspipo-w64.lib bin/libaspipo-w64.obj
 libaspipo-w32.lib : libaspipo-w32.obj
-	i586-mingw32msvc-ar -cvq libaspipo-w32.lib libaspipo-w32.obj
+	i586-mingw32msvc-ar -cvq bin/libaspipo-w32.lib bin/libaspipo-w32.obj
 
 #--------------------- Linux: libaspipo.o
 libaspipo-ux64.o : libaspipo.c libaspipo.h
-	gcc -m64 -march=x86-64 -mtune=generic -Wall -O0 -g -c libaspipo.c -fPIC -o libaspipo-ux64.o
+	gcc -m64 -march=x86-64 -mtune=generic -Wall -O0 -g -c src/lib/libaspipo.c -fPIC -o bin/libaspipo-ux64.o
 libaspipo-ux32.o : libaspipo.c libaspipo.h
-	gcc -m32 -march=i386 -mtune=generic -Wall -O0 -g -c libaspipo.c -fPIC -o libaspipo-ux32.o
+	gcc -m32 -march=i386 -mtune=generic -Wall -O0 -g -c src/lib/libaspipo.c -fPIC -o bin/libaspipo-ux32.o
 
 #--------------------- Windows: libaspipo.obj
 libaspipo-w64.obj : libaspipo.c libaspipo.h
-	x86_64-w64-mingw32-gcc -Wall -O0 -g -c libaspipo.c -o libaspipo-w64.obj
+	x86_64-w64-mingw32-gcc -Wall -O0 -g -c src/lib/libaspipo.c -o bin/libaspipo-w64.obj
 libaspipo-w32.obj : libaspipo.c libaspipo.h
-	i586-mingw32msvc-gcc -Wall -O0 -g -c libaspipo.c -o libaspipo-w32.obj
+	i586-mingw32msvc-gcc -Wall -O0 -g -c src/lib/libaspipo.c -o bin/libaspipo-w32.obj
 
 #--------------------- Linux: agente.x
 $(o)-ux64.x : $(o).c libaspipo.h libaspipo-ux64.a
@@ -119,3 +118,4 @@ clean : .clean-ux .clean-w
 	rm -f libaspipo-*.obj
 	rm -f libaspipo-*.lib
 	rm -f $(o).exe
+
