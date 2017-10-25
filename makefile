@@ -97,19 +97,19 @@ $(BINDIR)libaspipo-ux32.o : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
 #--------------------- Windows: libaspipo.obj
 $(BINDIR)libaspipo-w64.obj : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
 	x86_64-w64-mingw32-gcc -Wall -O0 -g -c $(SRCDIR)libaspipo.c -o $(BINDIR)libaspipo-w64.obj
-$(BINDIR)libaspipo-w32.obj : libaspipo.c libaspipo.h
+$(BINDIR)libaspipo-w32.obj : $(SRCDIR)libaspipo.c $(SRCDIR)libaspipo.h
 	i586-mingw32msvc-gcc -Wall -O0 -g -c $(SRCDIR)libaspipo.c -o $(BINDIR)libaspipo-w32.obj
 
 #--------------------- Linux: agente.x
-$(o)-ux64.x : $(o).c libaspipo.h libaspipo-ux64.a
+$(o)-ux64.x : $(o).c $(SRCDIR)libaspipo.h $(BINDIR)libaspipo-ux64.a
 	gcc -m64 -march=x86-64 -mtune=generic -Wall -O0 -g $(o).c $(BINDIR)libaspipo-ux64.a -o $(o)-ux64.x 2>&1 | tee errors-ux64.err
-$(o)-ux32.x : $(o).c libaspipo.h libaspipo-ux32.a
+$(o)-ux32.x : $(o).c $(SRCDIR)libaspipo.h $(BINDIR)libaspipo-ux32.a
 	gcc -m32 -march=i586 -mtune=generic -Wall -O0 -g $(o).c $(BINDIR)libaspipo-ux32.a -o $(o)-ux32.x 2>&1 | tee errors-ux32.err
 
 #--------------------- Windows: agente.exe
-$(o)-w64.exe : $(o).c libaspipo.h libaspipo-w64.lib
+$(o)-w64.exe : $(o).c $(SRCDIR)libaspipo.h $(BINDIR)libaspipo-w64.lib
 	x86_64-w64-mingw32-gcc -Wall -O0 -g $(o).c $(BINDIR)libaspipo-w64.lib -o $(o)-w64.exe 2>&1 | tee errors-w64.err
-$(o)-w32.exe : $(o).c libaspipo.h libaspipo-w32.lib
+$(o)-w32.exe : $(o).c $(SRCDIR)libaspipo.h $(BINDIR)libaspipo-w32.lib
 	i586-mingw32msvc-gcc -Wall -O0 -g $(o).c $(BINDIR)libaspipo-w32.lib -o $(o)-w32.exe 2>&1 | tee errors-w32.err
 
 clean : .clean-ux .clean-w
