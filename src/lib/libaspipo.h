@@ -67,12 +67,94 @@ Condicoes:
 */
 
 #define MAXACOES 1000
+#define MAXACOESFINAL 1100
+#define QTDSALA 100
+
+/* APRIORI0 -> nenhum conhecimento a priori */
+/* APRIORI1 -> mpos, qtd_sala */
+/* APRIORI2 -> menor_sala, maior_sala. implica saber 1. */
+/* APRIORI3 -> condicao de cada sala. implica saber 1 e 2. */
+/* APRIORI4 -> capacidade do saco */
+/* APRIORI5 -> sala de descarga e probabilidades do ambiente */
+#define APRIORI0 0
+#define APRIORI1 1
+#define APRIORI2 2
+#define APRIORI3 3
+#define APRIORI4 4
+#define APRIORI5 5
+
+/* OBS0 -> obs.v_andar, obs.v_ler, obs.v_aspirar, obs.v_assoprar, obs.v_passarvez, obs.v_limpar, obs.v_desc, obs.v_bonus*/
+/*         obs.p_sujar, obs.p_terremoto, obs.p_mecanica, obs.p_sensorial*/
+/*         mostrar_pontos() habilitada (retorna a pontuacao corrente)*/
+/*         Alem de tudo do OBS1, OBS2 e OBS3*/
+/* OBS1 -> obs.mpos (posicao do agente)*/
+/*         obs.sala[i] (condicao da sala i de limpeza/sujeira)*/
+/*         obs.capasaco (capacidade do saco do agente)*/
+/*         obs.qtd_sala (quantidade de salas do ambiente)*/
+/*         obs.menor_sala e obs.maior_sala (limites do ambiente)*/
+/*         obs.descarga_sala (sala de descarga, se houver)*/
+/*         Alem de tudo do OBS2 e OBS3*/
+/* OBS2 -> ler_chamado() habilitada (retorna uma sala suja qualquer)*/
+/*         Alem de tudo do OBS3*/
+/* OBS3 -> obs.terremoto (flag de terremoto)*/
+/* OBS4 -> completamente obscuro! */
+#define OBS0 0
+#define OBS1 1
+#define OBS2 2
+#define OBS3 3
+#define OBS4 4
+
+/*
+  0-deterministico
+  1-se suja com probabilidade p_sujar
+  2-mecanismo de aspirar e assoprar falha com probabilidade p_mecanica
+  3-sensores falham com probabilidade p_sensorial de erro
+  4-terremoto com probabilidade p_terremoto
+
+  Combine as opcoes com ou-binario.
+  Exemplo: se deseja sujeira e terremoto:
+  DETSUJEIRA|DETTERREMOTO
+*/
+
+
+#define DETERMINISTICO       0  /*0b000 0000 nada acontece*/
+#define DETSUJEIRA           1  /*0b000 0001 p_suja*/
+#define DETSUCCAO            2  /*0b000 0010 p_succao*/
+#define DETMOVIMENTO         4  /*0b000 0100 p_movimento*/
+#define DETSENSORES          8  /*0b000 1000 p_sensorial*/
+#define DETTERREMOTOBASICO  16  /*0b001 0000 p_terremoto apos acoes, mas nao apos sensores*/
+#define DETTERREMOTOTOTAL   32  /*0b010 0000 p_terremoto a qualquer momento*/
+#define DETCAPACIDADE       64  /*0b100 0000 p_terremoto a qualquer momento*/
 
 /* --------------------------- */
+typedef struct
+{
+  volatile int terremoto; /*volatil, dura uma acao, (1=teve terremoto, 0=nao teve terremoto) na acao passada */
+  int mpos; //static int pos_aspipo;
+  int capasaco; /*capacidade maxima do saco */
+  int sala[QTDSALA]; /* sala[A]=sala[B]=suja */
+  int qtd_sala, menor_sala, maior_sala, descarga_sala; /*configuracoes*/
+  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; /*pesos*/
+  float p_sujar, p_terremoto, p_succao, p_movimento, p_sensorial; /*configuracoes*/
+} observavel;
+extern observavel obs;
+
+typedef struct
+{
+  int v_andar, v_ler, v_aspirar, v_assoprar, v_passarvez, v_limpar, v_desc, v_bonus, v_tempolimpo; /*pesos*/
+} desempenho;
+extern desempenho md;
+
+typedef struct
+{
+  float p_sujar, p_terremoto; /*configuracoes*/
+  float p_succao, p_movimento, p_sensorial;
+} probabilidade;
+extern probabilidade pr;
 
 /* funcoes externas */
 
-extern volatile int terremoto;
+/* Agente alterna com Ambiente */
 extern int esquerda(void);
 extern int direita(void);
 extern int aspirar(void);
@@ -82,23 +164,14 @@ extern int ler_sujeira(void);
 extern int ler_posicao(void);
 extern int ler_descarga(void);
 extern int ler_chamado(void);
+
+/* Configuracoes e consultas da simulacao */
 extern int finalizar_ambiente(void);
-extern int ler_pontos(void);
+extern int pontos(void);
 extern int qtd_acoes(void);
-
-extern int inicializar_ambiente(int);
-extern int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vdesc, int vbonus, float psujar, float pterremoto);
-extern void mostrar_pontos(void);
-extern void gastos(int *qtd_andar, int *qtd_ler, int *qtd_aspirar, int *qtd_assoprar, int *qtd_passarvez, int *qtd_limpar, int *qtd_descarregar, int *qtd_bonus);
-
-
-/*
-funcao int inicializa_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vlimpar, float psujar, float pterremoto)
-Tipo: interna (a decidir. No momento, interna)
-entrada: sala, andar, sentir, aspirar, assoprar, limpar, sujar, terremoto
-saida: 0
-*/
-int inicializar_amb(int qtdsala, int vandar, int vler, int vaspirar, int vassoprar, int vpassarvez, int vlimpar, int vdesc, int vbonus, float psujar, float pterremoto);
+extern int inicializar_ambiente(int niveldet, int nivelobs, int qs, int apriori, int funcdes, desempenho *mdext, probabilidade *prext);
+extern int mostrar_pontos(void);
+extern void gastos(int *qtd_andar, int *qtd_ler, int *qtd_aspirar, int *qtd_assoprar, int *qtd_passarvez, int *qtd_limpar, int *qtd_descarregar, int *qtd_bonus, int *qtd_tempolimpo);
 
 /*
 funcao int inicializa_ambiente(void)
@@ -106,7 +179,7 @@ Tipo: externa
 entrada: quantidade de salas desejada, ou 0 para aleatorio
 saida: 0
 */
-int inicializar_ambiente(int qs);
+//int inicializar_ambiente(int qs);
 
 /*
 funcao void mostrar_pontos(void)
@@ -114,7 +187,7 @@ Tipo: externa
 calcula e imprime a pontuacao parcial
 nao gasta acoes, nem chama ambiente()
 */
-void mostrar_pontos(void);
+//void mostrar_pontos(void);
 
 /*
 funcao int esquerda(void)
@@ -123,7 +196,7 @@ entrada: nada
 saida: 0 se ok, -1 se erro
 move o agente para a esquerda, se nao for o limite da sala
 */
-int esquerda(void);
+//int esquerda(void);
 
 /*
 funcao int direita(void)
@@ -132,7 +205,7 @@ entrada: nada
 saida: 0 se ok, -1 se erro
 move o agente para a direita, se nao for o limite da sala
 */
-int direita(void);
+//int direita(void);
 
 /*
 funcao int ler_sujeira(void)
@@ -141,7 +214,7 @@ entrada: nada
 saida: 0 se limpo, 1 se sujo, -1 se erro
 indica a presenca de sujeira na sala atual
 */
-int ler_sujeira(void);
+//int ler_sujeira(void);
 
 /*
 funcao int ler_posicao(void)
@@ -150,7 +223,7 @@ entrada: nada
 saida: posicao do aspipo, um numero de 3 a 999, ou -1 se erro
 indica a posicao do agente
 */
-int ler_posicao(void);
+//int ler_posicao(void);
 
 /*
 funcao int ler_descarga(void)
@@ -160,7 +233,7 @@ saida: 1 se a sala eh de descarga, 0 se nao eh, e -1 se erro
 indica verdadeiro ou falso para a sala atual ser de descarga.
 Não é utilizada em ambientes com 2 salas, caso que retorna 0
 */
-int ler_descarga(void);
+//int ler_descarga(void);
 
 /*
 funcao int ler_chamado(void)
@@ -169,7 +242,7 @@ entrada: nada
 saida: alguma sala suja, se disponivel, ou -1 se tudo limpo
 indica uma sala aleatoria que esta suja, ou -1 se nao houver
 */
-int ler_chamado(void);
+//int ler_chamado(void);
 
 /*
 funcao int aspirar(void)
@@ -178,7 +251,7 @@ entrada: nada
 saida: 0 ok, -1 se erro
 Aspira uma sala
 */
-int aspirar(void);
+//int aspirar(void);
 
 /*
 funcao int passar_vez(void)
@@ -187,7 +260,7 @@ entrada: nada
 saida: nada
 nao faz nada
 */
-int passar_vez(void);
+//int passar_vez(void);
 
 /*
 funcao int assoprar(void)
@@ -196,7 +269,7 @@ entrada: nada
 saida: 0 ok, -1 se erro
 Assopra sujeira na sala atual
 */
-int assoprar(void);
+//int assoprar(void);
 
 /*
 funcao int ler_pontos(void)
@@ -205,7 +278,7 @@ entrada: nada
 saida: o numero de pontos se ok, ou -10000 se erro
 So roda apos finalizada simulacao. Imprime os pontos finais
 */
-int ler_pontos(void);
+//int ler_pontos(void);
 
 /*
 funcao int finalizar_ambiente(void)
@@ -214,7 +287,7 @@ entrada: nada
 saida: 0 para ok
 usada para encerrar a simulacao
 */
-int finalizar_ambiente(void);
+//int finalizar_ambiente(void);
 
 /*
 funcao int qtd_acoes(void)
@@ -222,7 +295,7 @@ entrada: nada
 saida: numero de acoes restantes, ou -1 para erro
 Esta funcao nao gasta acoes, nem chama o ambiente()
 */
-int qtd_acoes(void);
+//int qtd_acoes(void);
 
 /*
 funcao void gastos( ... )
@@ -230,7 +303,7 @@ Tipo: externa
 Retorna todas as acoes do agente, com a finalidade de ser usada com outros
 pesos para calculo da medida de desempenho
 */
-void gastos(int *qtd_andar, int *qtd_ler, int *qtd_aspirar, int *qtd_assoprar, int *qtd_passarvez, int *qtd_limpar, int *qtd_descarregar, int *qtd_bonus);
+//void gastos(int *qtd_andar, int *qtd_ler, int *qtd_aspirar, int *qtd_assoprar, int *qtd_passarvez, int *qtd_limpar, int *qtd_descarregar, int *qtd_bonus);
 
 
 //--------------------------------
